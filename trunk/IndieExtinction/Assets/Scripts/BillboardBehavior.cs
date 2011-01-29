@@ -18,7 +18,7 @@ public class BillboardBehavior : MonoBehaviour
 	// Update is called once per frame
     public virtual void Update() 
     {
-        var cam = GetMainCamera();
+        var cam = GlobalObjects.GetMainCamera();
 
         Vector3 toScreenVector = cam.transform.TransformDirection(Vector3.back);
 
@@ -27,10 +27,5 @@ public class BillboardBehavior : MonoBehaviour
         var toScreenRotation = Quaternion.FromToRotation(objectFrontVector, toScreenVector);
 
         transform.rotation = toScreenRotation * rollRotation;
-    }
-
-    private static Camera GetMainCamera()
-    {
-        return GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
     }
 }

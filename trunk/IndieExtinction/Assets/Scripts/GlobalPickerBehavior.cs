@@ -43,7 +43,7 @@ public class GlobalPickerBehavior : MonoBehaviour {
 
         if (Event.current.isMouse)
         {
-            var cam = GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
+            var cam = GlobalObjects.GetMainCamera();
 
             var mousePos = Event.current.mousePosition;
 
