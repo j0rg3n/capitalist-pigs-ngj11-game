@@ -1,2 +1,7 @@
 fileFormatVersion: 1
 guid: 2e77e6229f7949d46b245ff2fb9983a4
+MonoImporter:
+  importerVersion: 1
+  defaultReferences:
+    rightBackground: {fileID: 2800000, guid: bdc3c690829f46c498ba88edcce52065, type: 1}
+    right: {fileID: 2800000, guid: 74f9cea559d1a54429e7c43bb67183da, type: 1}
