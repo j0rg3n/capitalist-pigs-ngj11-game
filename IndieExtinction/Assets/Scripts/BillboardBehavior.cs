@@ -7,24 +7,26 @@ using System.Collections;
 public class BillboardBehavior : MonoBehaviour 
 {
     public Vector3 objectFrontVector = Vector3.up;
+    public float roll = 0;
 
 	// Use this for initialization
-	void Start () 
+	public virtual void Start () 
     {
         objectFrontVector.Normalize();   
 	}
 	
 	// Update is called once per frame
-	void Update () 
+    public virtual void Update() 
     {
         var cam = GetMainCamera();
 
         Vector3 toScreenVector = cam.transform.TransformDirection(Vector3.back);
 
-        var toScreenRotation = new Quaternion();
-        toScreenRotation.SetFromToRotation(objectFrontVector, toScreenVector);
+        var rollRotation = Quaternion.AngleAxis(roll + 180, objectFrontVector);
 
-        transform.rotation = toScreenRotation;
+        var toScreenRotation = Quaternion.FromToRotation(objectFrontVector, toScreenVector);
+
+        transform.rotation = toScreenRotation * rollRotation;
     }
 
     private static Camera GetMainCamera()
