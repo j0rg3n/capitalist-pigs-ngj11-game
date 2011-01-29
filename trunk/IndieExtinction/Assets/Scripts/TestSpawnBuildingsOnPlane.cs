@@ -1,18 +1,28 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TestSpawnBuildingsOnPlane : MonoBehaviour 
 {
-    public Transform buildingPrefab;
+    public Transform buildingPrefab1 = null;
+    public Transform buildingPrefab2 = null;
+    public Transform buildingPrefab3 = null;
 
 	void Start () 
     {
+        List<Transform> buildingPrefabs = new List<Transform>();
+        AddIfNotNull(buildingPrefabs, buildingPrefab1);
+        AddIfNotNull(buildingPrefabs, buildingPrefab2);
+        AddIfNotNull(buildingPrefabs, buildingPrefab3);
+
         int width = 5;
         int height = 5;
         for (int x = 0; x < width; ++x)
         {
             for (int y = 0; y < height; ++y)
             {
+                var buildingPrefab = buildingPrefabs[Random.Range(0, buildingPrefabs.Count - 1)];
+
                 var basePosition = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), x + .5f, y + .5f, width, height);
 
                 Transform buildingTransform = (Transform)Instantiate(buildingPrefab);
@@ -23,6 +33,14 @@ public class TestSpawnBuildingsOnPlane : MonoBehaviour
                 basePosition = buildingTransform.InverseTransformPoint(basePosition);
                 buildingTransform.Translate(basePosition + offset);
             }
+        }
+    }
+
+    private void AddIfNotNull<T>(List<T> items, T item)
+    {
+        if (item != null)
+        {
+            items.Add(item);
         }
     }
 	
