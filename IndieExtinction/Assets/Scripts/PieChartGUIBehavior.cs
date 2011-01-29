@@ -39,8 +39,8 @@ public class PieChartGUIBehavior : MonoBehaviour
 
     private static void DrawRotatedTexture(Rect clockRect, Texture2D texture, float amount)
     {
-        var center = new Vector2((clockRect.xMin + clockRect.xMax - 1) / 2,
-            (clockRect.yMin + clockRect.yMax - 1) / 2);
+        var center = new Vector2((clockRect.xMin + clockRect.xMax) / 2,
+            (clockRect.yMin + clockRect.yMax) / 2);
 
         Matrix4x4 prevTransform = GUI.matrix;
         GUIUtility.RotateAroundPivot(amount * 360, center);
