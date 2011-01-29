@@ -15,21 +15,13 @@ public class StudioBehavior : MonoBehaviour
 
         for (int i = 0; i < 20; ++i)
         {
-            var localSpawnPos = GetRandomPos(studioBounds);
+            var localSpawnPos = RandomUtil.GetPointInBounds(studioBounds);
             var worldSpawnPos = transform.TransformPoint(localSpawnPos);
 
             Transform indieDevInstance = (Transform)Instantiate(indieDevPrefab, worldSpawnPos, Quaternion.identity);
         }
 
         Destroy (gameObject);
-    }
-
-    private static Vector3 GetRandomPos(Bounds bounds)
-    {
-        float x = Random.RandomRange(bounds.center.x, bounds.center.x + bounds.extents.x);
-        float y = Random.RandomRange(bounds.center.x, bounds.center.x + bounds.extents.x);
-        float z = Random.RandomRange(bounds.center.x, bounds.center.x + bounds.extents.x);
-        return new Vector3(x, y, z);
     }
 
     public void Update() 
