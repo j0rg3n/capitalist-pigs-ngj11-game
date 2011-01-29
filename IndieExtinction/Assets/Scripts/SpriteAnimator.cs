@@ -36,10 +36,17 @@ public class SpriteAnimator : MonoBehaviour {
             CurrentTime = 0.0f;
 
             Vector2 Vect;
-            Rundirection = GetRunDirectionOnScreen();
-            if (Rundirection.x <= 0.0f && respectDirection)
+            if (respectDirection)
             {
-                Vect = new Vector2(-(1.0f / (float)Frames), 1.0f);
+                Rundirection = GetRunDirectionOnScreen();
+                if (Rundirection.x <= 0.0f)
+                {
+                    Vect = new Vector2(-(1.0f / (float)Frames), 1.0f);
+                }
+                else
+                {
+                    Vect = new Vector2((1.0f / (float)Frames), 1.0f);
+                }
             }
             else
             {
