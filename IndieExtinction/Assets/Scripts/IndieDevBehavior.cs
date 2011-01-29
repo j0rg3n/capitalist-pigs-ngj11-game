@@ -31,7 +31,7 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().Frames = 1;
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
-        GetComponent<GlobalGameStateBehavior>().addscore();
+        GlobalObjects.GetGlobbalGameState().addscore();
     }
 	
 	void Update () 
