@@ -32,6 +32,13 @@ public class TestSpawnBuildingsOnPlane : MonoBehaviour
 
                 basePosition = buildingTransform.InverseTransformPoint(basePosition);
                 buildingTransform.Translate(basePosition + offset);
+
+                IndieStudioBehavior indieStudio = buildingTransform.GetComponent<IndieStudioBehavior>();
+                if (indieStudio != null)
+                {
+                    indieStudio.indieDevCount = Random.Range(1, 20);
+                    indieStudio.devTimeSeconds = 40 / indieStudio.indieDevCount;
+                }
             }
         }
     }

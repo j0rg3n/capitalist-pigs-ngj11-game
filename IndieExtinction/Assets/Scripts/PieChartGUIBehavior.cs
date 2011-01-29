@@ -11,17 +11,19 @@ public class PieChartGUIBehavior : MonoBehaviour
 
     void OnGUI()
     {
-        amount += Time.deltaTime * .25f;
-
         var wrappedAmount = amount - Mathf.Floor(amount);
 
         var camera = GlobalObjects.GetMainCamera();
         var screenPos = camera.WorldToScreenPoint(transform.position);
 
+        // TODO: Find out why WorldToScreenPoint gets the Y 
+        // coordinate inverted.
+        screenPos.y = Screen.height - screenPos.y;
+
         var clockRect = new Rect(screenPos.x - (size - size * alignment.x),
             screenPos.y - (size - size * alignment.y),
-            size * alignment.x,
-            size * alignment.y);
+            size,
+            size);
         
         if (wrappedAmount < .5f)
         {
