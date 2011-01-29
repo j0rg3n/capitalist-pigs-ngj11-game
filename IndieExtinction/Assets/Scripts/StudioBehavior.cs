@@ -5,6 +5,7 @@ public class StudioBehavior : MonoBehaviour
 {
     public Transform indieDevFemalePrefab;
     public Transform indieDevMalePrefab;
+    public AudioClip Sound_explotion;
 
     public void Start () 
     {
@@ -29,11 +30,18 @@ public class StudioBehavior : MonoBehaviour
             }
         }
 
-        Destroy (gameObject);
+        audio.PlayOneShot(Sound_explotion);
+        StartCoroutine(DestroyAfterDelay(Sound_explotion.length));
     }
 
     public void Update() 
     {
 	
 	}
+
+    public IEnumerator DestroyAfterDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        Destroy(gameObject);
+    }
 }

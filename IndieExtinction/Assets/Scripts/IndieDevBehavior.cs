@@ -3,6 +3,8 @@ using System.Collections;
 
 public class IndieDevBehavior : MonoBehaviour 
 {
+    public AudioClip mySound;
+
     public Vector3 RunDirection
     {
         get { return runDirection; }
@@ -15,6 +17,11 @@ public class IndieDevBehavior : MonoBehaviour
         var directionTransform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
         runDirection = directionTransform.MultiplyVector(Vector3.forward);
 	}
+
+    public void OnMouseClicked()
+    {
+        audio.PlayOneShot(mySound);
+    }
 	
 	void Update () 
     {
