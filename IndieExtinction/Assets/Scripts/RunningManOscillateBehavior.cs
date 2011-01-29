@@ -10,10 +10,20 @@ public class RunningManOscillateBehavior : BillboardBehavior
         base.Start();
 	}
 
+    public void OnMouseClicked()
+    {
+        oscillationStarted = Time.time;
+    }
+
     public override void Update() 
     {
-        roll = 15 + 30 * Mathf.Sin(Time.time * Mathf.PI * 2 * oscillationsPerSecond);
+        if (Time.time - oscillationStarted < 1)
+        {
+            roll = 15 + 30 * Mathf.Sin(Time.time * Mathf.PI * 2 * oscillationsPerSecond);
+        }
 
         base.Update();
 	}
+
+    private float oscillationStarted = float.MinValue;
 }
