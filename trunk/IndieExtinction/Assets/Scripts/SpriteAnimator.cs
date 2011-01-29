@@ -6,22 +6,27 @@ public class SpriteAnimator : MonoBehaviour {
     public int Frames = 4;
     public float CurrentTime = 0.0f;
     public float UpdateTime = 0.2f;
-    public Texture2D MainTexture;
+    public int currentFrame = 1;
+    // public Texture2D MainTexture;
     public Vector2 Rundirection;
+
+    public void SetMaterial(Material myMaterial)
+    {
+        if (renderer.material != myMaterial)
+            renderer.material = myMaterial;
+    }
+
     
-    int currentFrame = 1;
     
 	// Use this for initialization
-	void Start () {
+	void Start () 
+    {
         
 	}
-	
+
 	// Update is called once per frame
 	void Update () 
     {
-        if (renderer.material.mainTexture != MainTexture)
-            renderer.material.mainTexture = MainTexture;
-
         CurrentTime += Time.deltaTime;
 
         if (CurrentTime > UpdateTime)
@@ -55,6 +60,7 @@ public class SpriteAnimator : MonoBehaviour {
         }
 
 	}
+
 
     private Vector3 GetRunDirectionOnScreen()
     {
