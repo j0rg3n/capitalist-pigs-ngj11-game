@@ -13,7 +13,7 @@ public class TestSpawnBuildingsOnPlane : MonoBehaviour
         {
             for (int y = 0; y < height; ++y)
             {
-                var basePosition = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), x, y, width, height);
+                var basePosition = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), x + .5f, y + .5f, width, height);
 
                 Transform buildingTransform = (Transform)Instantiate(buildingPrefab);
 
