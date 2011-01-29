@@ -7,6 +7,7 @@ public class IndieDevBehavior : BillboardBehavior
     public AudioClip mySound;
     public Material Death;
     public Material run;
+    public Transform Blood;
     private bool alive;
     
     public Vector3 RunDirection
@@ -34,6 +35,8 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
         GlobalObjects.GetGlobbalGameState().addkillscore();
+        
+        Instantiate(Blood, transform.position, transform.rotation);
     }
 	
 	public override void Update () 

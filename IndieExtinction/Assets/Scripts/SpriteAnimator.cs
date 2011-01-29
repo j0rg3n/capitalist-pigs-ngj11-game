@@ -7,6 +7,8 @@ public class SpriteAnimator : MonoBehaviour {
     public float CurrentTime = 0.0f;
     public float UpdateTime = 0.2f;
     public int currentFrame = 1;
+    public bool Loop = true;
+    public bool respectDirection = true;
     // public Texture2D MainTexture;
     public Vector2 Rundirection;
 
@@ -35,27 +37,30 @@ public class SpriteAnimator : MonoBehaviour {
 
             Vector2 Vect;
             Rundirection = GetRunDirectionOnScreen();
-            if (Rundirection.x >= 0.0f)
-            {
-                Vect = new Vector2((1.0f / (float)Frames), 1.0f);
-            }
-            else
+            if (Rundirection.x <= 0.0f && respectDirection)
             {
                 Vect = new Vector2(-(1.0f / (float)Frames), 1.0f);
             }
+            else
+            {
+                Vect = new Vector2((1.0f / (float)Frames), 1.0f);
+            }
             renderer.material.SetTextureScale("_MainTex", Vect);
 
+
+                
             Vector2 val = renderer.material.mainTextureOffset;
-            val.x += (float)(1.0f / Frames);
+            val.x = (float)((1.0f / Frames)* currentFrame);
             renderer.material.mainTextureOffset = val;
-            currentFrame += 1;
+            if (Loop)
+                currentFrame += 1;
+            
             if (currentFrame > Frames)
             {
                 val = renderer.material.mainTextureOffset;
                 val.x = 0.0f;
                 renderer.material.mainTextureOffset = val;
                 currentFrame = 1;
-
             }
         }
 
