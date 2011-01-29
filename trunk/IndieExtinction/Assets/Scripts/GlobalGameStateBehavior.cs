@@ -21,18 +21,27 @@ public class GlobalGameStateBehavior : MonoBehaviour
         score *= badPie;
     }
 
-    public int getscore
+    public int Score
     {
         get { return score; }
     }
 
-	// Use this for initialization
-	void Start () {
+    public float TimeRemaining
+    {
+        get
+        {
+            var themeAudioSource = GetComponent<AudioSource>();
+            return themeAudioSource.clip.length - themeAudioSource.time;
+        }
+    }
+
+	void Start () 
+    {
         score = 100;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	void Update () 
+    {
+	    
 	}
 }
