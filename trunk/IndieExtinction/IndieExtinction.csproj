@@ -50,7 +50,9 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\BillboardBehavior.cs" />
      <Compile Include="Assets\Scripts\GlobalPickerBehavior.cs" />
+     <Compile Include="Assets\Scripts\IndieDevBehavior.cs" />
      <Compile Include="Assets\Scripts\ObjectNames.cs" />
+     <Compile Include="Assets\Scripts\RandomUtil.cs" />
      <Compile Include="Assets\Scripts\RunningManOscillateBehavior.cs" />
      <Compile Include="Assets\Scripts\StudioBehavior.cs" />
   </ItemGroup>
