@@ -18,7 +18,7 @@ public class StudioBehavior : MonoBehaviour
             var localSpawnPos = RandomUtil.GetPointInBounds(studioBounds);
             var worldSpawnPos = transform.TransformPoint(localSpawnPos);
 
-            Transform indieDevInstance = (Transform)Instantiate(indieDevPrefab, worldSpawnPos, Quaternion.identity);
+            Instantiate(indieDevPrefab, worldSpawnPos, Quaternion.identity);
         }
 
         Destroy (gameObject);
