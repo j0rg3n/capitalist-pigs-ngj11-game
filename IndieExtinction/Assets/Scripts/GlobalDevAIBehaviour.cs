@@ -21,10 +21,9 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public Texture2D mapFieldTexture;
 	public Transform buildingPrefab;
 
-	public Transform InstantiateBuildingTransform()
+	public Transform InstantiateBuilding()
 	{
-		Transform buildingTransform = (Transform)Instantiate(buildingPrefab);
-		return buildingTransform;
+		return (Transform)Instantiate(buildingPrefab);
 	}
 
 	// TODO:3 consider keeping this in a single-dimention array called map
@@ -73,6 +72,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	{
 		waver.AI = this;
 
+        GetComponent<MeshRenderer>().material.mainTexture = mapFieldTexture;
+
 		MapWidth = mapFieldTexture.width;
 		MapHeight = mapFieldTexture.height;
 
@@ -119,12 +120,12 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					GlobalObjects.indieHouseLocations.Add(location);
 					++studiosCreated;
 
-					// TODO:m remove
-					location.waitingCount = 5;
-					location.CreateHouse();
-
 					location.baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
-				}
+
+                    // TODO:m remove
+                    location.waitingCount = 5;
+                    location.CreateHouse();
+                }
 			}
         }
 		System.Diagnostics.Debug.Assert(bFoundStartingPoint);
