@@ -34,16 +34,16 @@ public class IndieDevBehavior : BillboardBehavior
         GlobalObjects.GetGlobbalGameState().addscore();
     }
 	
-	void Update () 
+	public override void Update () 
     {
-
         if (alive)
 		{
-        var pos = transform.position;
-        pos += runDirection * Time.deltaTime;
-        transform.position = pos;
+            var pos = transform.position;
+            pos += runDirection * Time.deltaTime;
+            transform.position = pos;
 		}
-base.Update();
+
+        base.Update();
 	}
 
     private Vector3 runDirection;
