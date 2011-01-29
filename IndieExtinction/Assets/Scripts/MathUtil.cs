@@ -2,12 +2,7 @@
 
 public class MathUtil
 {
-    public static Vector3 GetWorldPositionFromGridIndex(MeshFilter planeMeshFilter, int index, int width, int height)
-    {
-        return GetWorldPositionFromGridCoordinate(planeMeshFilter, index % width, index / width, width, height);
-    }
-
-    public static Vector3 GetWorldPositionFromGridCoordinate(MeshFilter planeMeshFilter, int x, int y, int width, int height)
+    public static Vector3 GetWorldPositionFromGridCoordinate(MeshFilter planeMeshFilter, float x, float y, int width, int height)
     {
         var localPoint = GetLocalPositionFromGridCoordinate(planeMeshFilter, x, y, width, height);
             
@@ -19,12 +14,12 @@ public class MathUtil
     /// This assumes that the plane has <c>Vector3D.up</c> as its up axis.
     /// Gets the center of the grid cell.
     /// </summary>
-    private static Vector3 GetLocalPositionFromGridCoordinate(MeshFilter planeMeshFilter, int x, int y, int width, int height)
+    private static Vector3 GetLocalPositionFromGridCoordinate(MeshFilter planeMeshFilter, float x, float y, int width, int height)
     {
         var localBounds = planeMeshFilter.mesh.bounds;
-        var localPoint = new Vector3(localBounds.min.x + (localBounds.max.x - localBounds.min.x) * (float)(x + .5f) / (float)width,
+        var localPoint = new Vector3(localBounds.min.x + (localBounds.max.x - localBounds.min.x) * (float)x / (float)width,
             0f,
-            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (float)(y + .5f) / (float)height);
+            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (float)y / (float)height);
         return localPoint;
     }
 
