@@ -25,7 +25,9 @@ public class IndieDevBehavior : MonoBehaviour
 	
 	void Update () 
     {
-        transform.Translate(runDirection * Time.deltaTime);
+        var pos = transform.position;
+        pos += runDirection * Time.deltaTime;
+        transform.position = pos;
 	}
 
     private Vector3 runDirection;

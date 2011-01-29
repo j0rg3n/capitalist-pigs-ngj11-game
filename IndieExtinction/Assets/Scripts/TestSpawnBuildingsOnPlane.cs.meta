@@ -3,4 +3,6 @@ guid: 22894a4380da4ed4ca78d918f5a16b80
 MonoImporter:
   importerVersion: 1
   defaultReferences:
-    buildingPrefab: {fileID: 400000, guid: 7559111583c42ca4bbe71cae3b69af6f, type: 2}
+    buildingPrefab1: {fileID: 400000, guid: 6af6e0210ebed834a93fbb2f8894813c, type: 2}
+    buildingPrefab2: {fileID: 400000, guid: 7559111583c42ca4bbe71cae3b69af6f, type: 2}
+    buildingPrefab3: {}
