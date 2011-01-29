@@ -37,11 +37,11 @@ public class SpriteAnimator : MonoBehaviour {
             Rundirection = GetRunDirectionOnScreen();
             if (Rundirection.x >= 0.0f)
             {
-                Vect = new Vector2(-(1.0f / (float)Frames), 1.0f);
+                Vect = new Vector2((1.0f / (float)Frames), 1.0f);
             }
             else
             {
-                Vect = new Vector2((1.0f / (float)Frames), 1.0f);
+                Vect = new Vector2(-(1.0f / (float)Frames), 1.0f);
             }
             renderer.material.SetTextureScale("_MainTex", Vect);
 

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GlobalGameStateBehavior : MonoBehaviour
 {
-    public int score = 100;
+    public int score;
     public int kill = 10;
 
     public void addkillscore()
@@ -28,7 +28,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
-	
+        score = 100;
 	}
 	
 	// Update is called once per frame
