@@ -55,13 +55,12 @@ namespace Irrelevant.Assets.Scripts
 			System.Diagnostics.Debug.Assert(!isPresent);
 			isPresent = true;
 
-			Transform buildingTransform = GlobalObjects.GetDevAIBehaviour().InstantiateBuildingTransform();
+			Transform buildingTransform = GlobalObjects.GetDevAIBehaviour().InstantiateBuilding();
 
 			var offset = buildingTransform.GetComponent<MeshFilter>().mesh.bounds.extents;
 			offset.Scale(Vector3.up);
 
-			var basePosition = buildingTransform.InverseTransformPoint(baseWorldPos);
-			buildingTransform.Translate(basePosition + offset);
+            buildingTransform.position = baseWorldPos + offset;
 
 			studio = buildingTransform.GetComponent<IndieStudioBehavior>();
 			studio.location = this;

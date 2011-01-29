@@ -1,7 +1,22 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class MathUtil
 {
+    public static IEnumerable<Vector3> GetBoundsCorners(Bounds bounds)
+    {
+        foreach (float x in new[]{bounds.min.x, bounds.max.x})
+        {
+            foreach (float y in new[]{bounds.min.y, bounds.max.y})
+            {
+                foreach (float z in new[]{bounds.min.z, bounds.max.z})
+                {
+                    yield return new Vector3(x, y, z);
+                }
+            }
+        }
+    }
+
     public static Vector3 GetWorldPositionFromGridCoordinate(MeshFilter planeMeshFilter, float x, float y, int width, int height)
     {
         var localPoint = GetLocalPositionFromGridCoordinate(planeMeshFilter, x, y, width, height);
@@ -17,9 +32,9 @@ public class MathUtil
     private static Vector3 GetLocalPositionFromGridCoordinate(MeshFilter planeMeshFilter, float x, float y, int width, int height)
     {
         var localBounds = planeMeshFilter.mesh.bounds;
-        var localPoint = new Vector3(localBounds.min.x + (localBounds.max.x - localBounds.min.x) * (float)x / (float)width,
+        var localPoint = new Vector3(localBounds.min.x + (localBounds.max.x - localBounds.min.x) * (width - x) / width,
             0f,
-            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (float)y / (float)height);
+            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (height - y) / height);
         return localPoint;
     }
 
