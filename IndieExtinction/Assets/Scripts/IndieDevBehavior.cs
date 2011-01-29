@@ -3,6 +3,11 @@ using System.Collections;
 
 public class IndieDevBehavior : MonoBehaviour 
 {
+    public Vector3 RunDirection
+    {
+        get { return runDirection; }
+    }
+
 	void Start () 
     {	
         float angle = Random.RandomRange(0f, 360f);
