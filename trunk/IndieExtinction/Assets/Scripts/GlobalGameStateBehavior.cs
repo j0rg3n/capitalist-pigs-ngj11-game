@@ -6,9 +6,19 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public int score = 100;
     public int kill = 10;
 
-    public void addscore()
+    public void addkillscore()
     {
         score += kill;
+    }
+
+    public void multiplayer(int goodPie)
+    {
+        score *= goodPie;
+    }
+
+    public void demultiplyer(int badPie)
+    {
+        score *= badPie;
     }
 
     public int getscore
