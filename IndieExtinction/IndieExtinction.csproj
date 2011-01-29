@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.21022</ProductVersion>
+	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{FD1FAF86-6F8D-28CC-D3CF-9CEC11F3B830}</ProjectGuid>
 	<OutputType>Library</OutputType>
@@ -48,16 +48,26 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\AIDevGuy.cs" />
+     <Compile Include="Assets\Scripts\AITrack.cs" />
+     <Compile Include="Assets\Scripts\AIWaver.cs" />
      <Compile Include="Assets\Scripts\BillboardBehavior.cs" />
+     <Compile Include="Assets\Scripts\GlobalDevAIBehaviour.cs" />
      <Compile Include="Assets\Scripts\GlobalGameStateBehavior.cs" />
      <Compile Include="Assets\Scripts\GlobalObjects.cs" />
      <Compile Include="Assets\Scripts\GlobalPickerBehavior.cs" />
      <Compile Include="Assets\Scripts\guiScriptBehavior.cs" />
      <Compile Include="Assets\Scripts\IndieDevBehavior.cs" />
+     <Compile Include="Assets\Scripts\IndieHouseLocation.cs" />
+     <Compile Include="Assets\Scripts\IndieStudioBehavior.cs" />
+     <Compile Include="Assets\Scripts\MathUtil.cs" />
+     <Compile Include="Assets\Scripts\PieChartGUIBehavior.cs" />
      <Compile Include="Assets\Scripts\RandomUtil.cs" />
      <Compile Include="Assets\Scripts\RunningManOscillateBehavior.cs" />
      <Compile Include="Assets\Scripts\SpriteAnimator.cs" />
      <Compile Include="Assets\Scripts\StudioBehavior.cs" />
+     <Compile Include="Assets\Scripts\StudioBehaviorBase.cs" />
+     <Compile Include="Assets\Scripts\TestSpawnBuildingsOnPlane.cs" />
      <None Include="Assets\ToonShading\Sources\Toony-Basic.shader" />
      <None Include="Assets\ToonShading\Sources\Toony-BasicOutline.shader" />
      <None Include="Assets\ToonShading\Sources\Toony-Lighted.shader" />
