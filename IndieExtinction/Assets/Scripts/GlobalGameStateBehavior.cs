@@ -3,10 +3,17 @@ using System.Collections;
 
 public class GlobalGameStateBehavior : MonoBehaviour
 {
-    private int score = 100;
-    public int getScore()
+    public int score = 100;
+    public int kill = 10;
+
+    public void addscore()
     {
-        return score;
+        score += kill;
+    }
+
+    public int getscore
+    {
+        get { return score; }
     }
 
 	// Use this for initialization
