@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Irrelevant.Assets.Scripts.AI;
 
 public class IndieDevBehavior : BillboardBehavior 
 {
@@ -22,6 +23,7 @@ public class IndieDevBehavior : BillboardBehavior
         var rotation = Quaternion.AngleAxis(angle, Vector3.up);
         var directionTransform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
         runDirection = directionTransform.MultiplyVector(Vector3.forward);
+		
 	}
 
     public void OnMouseClicked()
@@ -31,7 +33,7 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().Frames = 1;
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
-        GlobalObjects.GetGlobbalGameState().addscore();
+        //GlobalObjects.GetGlobbalGameState().addscore();
     }
 	
 	public override void Update () 
@@ -47,4 +49,6 @@ public class IndieDevBehavior : BillboardBehavior
 	}
 
     private Vector3 runDirection;
+
+	public DevGuy aiDevGuy; // TODO:m init this
 }
