@@ -37,6 +37,11 @@ public class GlobalGameStateBehavior : MonoBehaviour
         lastPieLossTime = Time.time;
     }
 
+    public void LoadIntroLevel()
+    {
+        persistentGameState.LoadIntro();
+    }
+
     public void ScaleInstance(Transform newInstance)
     {
         newInstance.localScale = newInstance.localScale * GlobalObjects.GetGlobbalGameState().instanceScale;
@@ -53,11 +58,31 @@ public class GlobalGameStateBehavior : MonoBehaviour
 
             if (pie <= 0)
             {
+                //  TOD: Load end fo game scjlien.
+
+                GameOver = true;
                 persistentGameState.LoadDeath();
                 return;
             }
         }
     }
+
+    public bool GameOver 
+    {
+        get { return gameOver; }
+        set 
+        { 
+            gameOver = value;
+            gameOverTime = Time.time;
+        } 
+    }
+
+    public float SecondsSinceGameOver
+    {
+        get { return gameOver ? Time.time - gameOverTime : float.MinValue; }
+    }
+
+    private float gameOverTime;
 
     // TODO: Move VisualPie into guiScriptBehavior.
     public float VisualPie
@@ -122,16 +147,20 @@ public class GlobalGameStateBehavior : MonoBehaviour
         if (gameScene)
         {
             houseCount = 0;
-            foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
+            //(foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
+            if (!GameOver)
             {
-                if (location.isPresent)
+                houseCount = 0;
+                foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
                 {
-                    ++houseCount;
+                    if (location.isPresent)
+                    {
+                        ++houseCount;
+                    }
                 }
-            }
 
-            var healtPie = GlobalObjects.GetHealthPie();
-            healtPie.amount = 1 - VisualPie / 100.0f;
+                var healtPie = GlobalObjects.GetHealthPie();
+                healtPie.amount = 1 - VisualPie / 100.0f;
 
             float now = Time.time;
             if (now > nextWaveTime)
@@ -148,25 +177,29 @@ public class GlobalGameStateBehavior : MonoBehaviour
                 ++nextWaveIndex;
             }
 
-            string newAlert = null;
-            bool newAlertFlashing = false;
-            if (nextWaveTime - now < ALERT_WAVE_SECONDS)
-            {
-                newAlert = string.Format(CheeringMessages.GetMessage(MessageType.Wave), Mathf.CeilToInt(nextWaveTime - now));
-            }
-            else if (now - lastPieLossTime < PIE_LOSS_ALERT_TIME)
-            {
-                newAlert = CheeringMessages.GetMessage(MessageType.Loss);
-                newAlertFlashing = true;
-            }
-            else if (houseCount > 0)
-            {
-                newAlert = CheeringMessages.GetMessage(MessageType.Click);
-                newAlertFlashing = true;
-            }
+                string newAlert = null;
+                bool newAlertFlashing = false;
+                if (nextWaveTime - now < ALERT_WAVE_SECONDS)
+                {
+                    newAlert = string.Format(CheeringMessages.GetMessage(MessageType.Wave), Mathf.CeilToInt(nextWaveTime - now));
+                }
+                else if (now - lastPieLossTime < PIE_LOSS_ALERT_TIME)
+                {
+                    newAlert = CheeringMessages.GetMessage(MessageType.Loss);
+                    newAlertFlashing = true;
+                }
+                else if (houseCount > 0)
+                {
+                    newAlert = CheeringMessages.GetMessage(MessageType.Click);
+                    newAlertFlashing = true;
+                }
 
-            GlobalObjects.GetGUIScriptBehavior().alert = newAlert;
-            GlobalObjects.GetGUIScriptBehavior().alertFlashing = newAlertFlashing;
+                GlobalObjects.GetGUIScriptBehavior().alert = newAlert;
+                GlobalObjects.GetGUIScriptBehavior().alertFlashing = newAlertFlashing;
+
+                if (TimeRemaining < 0.0f)
+                    GameOver = true;
+            }
         }
         else
         {
@@ -214,6 +247,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     private AnimationCurve visualPieCurve;
     private float nextWaveTime = float.MaxValue;
     private int nextWaveIndex = 0;
+    public bool gameOver = false;
 
     // Slide 0 is the pause before the first actual slide.
     private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };
