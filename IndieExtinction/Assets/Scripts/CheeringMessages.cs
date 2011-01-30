@@ -42,9 +42,9 @@ namespace Irrelevant.Assets.Scripts
 
         private static readonly string[] waveMessages = new[] {
             "Restructuring in: {0} seconds",
-            "Ejection of surplus employees in: XX",
-            "Termination party in: XX",
-            "Firing round in: XX" };
+            "Ejection of surplus employees in:",
+            "Termination party in:",
+            "Firing round in:" };
 
         private static readonly string[] clickMessages = new[] {
             "Crush the indie upstarts!",
