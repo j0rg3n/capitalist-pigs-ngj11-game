@@ -8,14 +8,5 @@ public class StudioBehavior : StudioBehaviorBase
 	public void OnMouseClicked(RaycastHit hitInfo)
 	{
         SpawnIndieDevs(100, -1);
-
-        audio.PlayOneShot(Sound_explotion);
-        StartCoroutine(DestroyAfterDelay(Sound_explotion.length));
-    }
-
-    public IEnumerator DestroyAfterDelay(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        Destroy(gameObject);
     }
 }

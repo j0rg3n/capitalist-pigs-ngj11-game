@@ -2,9 +2,11 @@ using UnityEngine;
 using System.Collections;
 using Irrelevant.Assets.Scripts.AI;
 
-public class IndieDevBehavior : BillboardBehavior 
+public class IndieDevBehavior : BillboardBehavior
 {
-    public AudioClip mySound;
+    public AudioClip[] Splats;
+    public AudioClip[] Screams;
+    public AudioClip[] Laughs;
     public Material Death;
     public Material run;
     public Transform Blood;
@@ -36,7 +38,7 @@ public class IndieDevBehavior : BillboardBehavior
 
     public void OnMouseClicked()
     {
-        audio.PlayOneShot(mySound);
+        PlayDeathSounds();
         GetComponent<SpriteAnimator>().currentFrame = 1;
         GetComponent<SpriteAnimator>().Frames = 1;
         GetComponent<SpriteAnimator>().SetMaterial(Death);
@@ -74,6 +76,37 @@ public class IndieDevBehavior : BillboardBehavior
 
         base.Update();
 	}
+
+    private void PlayDeathSounds()
+    {
+        if (Splats.Length > 0)
+        {
+            AudioClip splat = Splats[Random.Range(0, Splats.Length)];
+            if (splat != null)
+            {
+                audio.PlayOneShot(splat);
+            }
+        }
+        if (Screams.Length > 0)
+        {
+            AudioClip scream = Screams[Random.Range(0, Screams.Length)];
+            if (scream != null)
+            {
+                audio.PlayOneShot(scream);
+            }
+        }
+        if (Laughs.Length > 0)
+        {
+            if (Random.value < 0.10)
+            {
+                AudioClip laugh = Laughs[Random.Range(0, Laughs.Length)];
+                if (laugh != null)
+                {
+                    audio.PlayOneShot(laugh);
+                }
+            }
+        }
+    }
 
     private Vector3 runDirection;
 

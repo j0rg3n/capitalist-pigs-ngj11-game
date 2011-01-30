@@ -1,2 +1,9 @@
 fileFormatVersion: 1
 guid: 44060d32fe4f97d49bac1b550cb66304
+MonoImporter:
+  importerVersion: 1
+  defaultReferences:
+    indieDevFemalePrefab: {fileID: 400000, guid: f952edc1eafce2543a1d0eb5fe94b114,
+      type: 2}
+    indieDevMalePrefab: {fileID: 400000, guid: 2f8ed64a7e368ea4fa52b0ac8fc3fb2b, type: 2}
+    pop: {fileID: 8300000, guid: f3f215f1806a27243b61e11203d56bd0, type: 1}
