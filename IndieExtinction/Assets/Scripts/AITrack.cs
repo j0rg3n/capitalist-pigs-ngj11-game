@@ -7,7 +7,7 @@ namespace Irrelevant.Assets.Scripts.AI
 	{
 		public Waver waver;
 
-		public const int MAX_LENGTH = 5 + 1; // 1 for the starting tile
+		public const int MAX_LENGTH = 8 + 1; // 1 for the starting tile
 
 		public List<int> track = new List<int>(); // furthest blocks come last
 		public int grade = 0;

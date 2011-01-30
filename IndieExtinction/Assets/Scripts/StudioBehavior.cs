@@ -7,7 +7,7 @@ public class StudioBehavior : StudioBehaviorBase
 
 	public void OnMouseClicked(RaycastHit hitInfo)
 	{
-        SpawnIndieDevs(20, -1);
+        SpawnIndieDevs(10, -1);
 
         audio.PlayOneShot(Sound_explotion);
         StartCoroutine(DestroyAfterDelay(Sound_explotion.length));

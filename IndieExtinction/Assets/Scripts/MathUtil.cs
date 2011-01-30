@@ -62,6 +62,21 @@ public class MathUtil
     }
     */
 
+	public static Vector2 GetLocalPositionFromWorldCorrected(MeshFilter planeMeshFilter, Vector3 worldPoint)
+	{
+		Vector3 localPos = MathUtil.GetLocalPositionFromWorld(GlobalObjects.GetMapMesh(), worldPoint);
+		localPos.x = -localPos.x;
+		localPos.y = 0f;
+		localPos.x += 5f;
+		localPos.z += 5f;
+		localPos.x *= 0.1f;
+		localPos.z *= 0.1f;
+		//UnityEngine.Debug.Log(string.Format("localPos {0} {1} {2}", localPos.x, localPos.y, localPos.z));
+		return new Vector2(localPos.x, localPos.z);
+	}
+
+
+
     private MathUtil()
     {
     }

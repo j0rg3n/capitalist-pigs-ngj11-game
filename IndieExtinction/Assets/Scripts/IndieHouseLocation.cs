@@ -9,8 +9,8 @@ namespace Irrelevant.Assets.Scripts
 {
 	public class IndieHouseLocation
 	{
-		public const int MAX_DEVS_IN_INDIE_HOUSE = 25;
-		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 5;
+		public const int MAX_DEVS_IN_INDIE_HOUSE = 4;
+		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 3;
 
 		public int houseTileInd = -1;
 		public Vector3 baseWorldPos;
@@ -35,7 +35,20 @@ namespace Irrelevant.Assets.Scripts
 
 		public bool Overlaps(DevGuy devGuy)
 		{
-			// TODO:m 
+			Vector3 worldPos = devGuy.indieDevBehaviour.GetAIWorldTransform();
+			if (isPresent)
+			{
+				MeshFilter studioMesh = studio.GetComponent<MeshFilter>();
+				Transform transform = studio.GetComponent<Transform>();
+
+				var bounds = studioMesh.mesh.bounds;
+				Vector3 localPos = transform.InverseTransformPoint(worldPos);
+				bool inside = localPos.x <= bounds.center.x + bounds.extents.x;
+				inside &= localPos.x >= bounds.center.x - bounds.extents.x;
+				inside &= localPos.z <= bounds.center.z + bounds.extents.z;
+				inside &= localPos.z >= bounds.center.z - bounds.extents.z;
+				return inside;
+			}
 			return false;
 		}
 
