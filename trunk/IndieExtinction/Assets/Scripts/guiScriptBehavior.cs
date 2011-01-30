@@ -57,7 +57,8 @@ public class guiScriptBehavior : MonoBehaviour
             GUI.skin.font = GameOverFont;
             GUI.Label(new Rect(Screen.width/4, Screen.height/4, 500, 100), "GAME OVER");
             GUI.skin.font = StatsFont;
-            GUI.Label(new Rect(Screen.width / 2, Screen.height / 3, 400, 100), "Final Score" + globalgamestate.score);
+            GUI.Label(new Rect(Screen.width / 3, Screen.height / 2, 400, 100), "Final Score" + globalgamestate.score);
+
         }
     }
 
