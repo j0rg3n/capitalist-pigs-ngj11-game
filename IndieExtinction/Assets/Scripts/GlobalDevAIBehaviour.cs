@@ -407,7 +407,11 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			{
 				for (int k = i; k < j; ++k)
 				{
-					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex).Clone();
+					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
+					if (devsToProcess[k].devGuy.currentTrack != null)
+					{
+						devsToProcess[k].devGuy.currentTrack = devsToProcess[k].devGuy.currentTrack.Clone();
+					}
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
 					//UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
