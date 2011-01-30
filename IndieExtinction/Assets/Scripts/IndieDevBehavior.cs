@@ -37,16 +37,10 @@ public class IndieDevBehavior : BillboardBehavior
 
 		aiDevGuy.Position = MathUtil.GetLocalPositionFromWorldCorrected(GlobalObjects.GetMapMesh(), transform.position);
 	}
-
-    public void OnBigMouseClicked()
+    
+    public void OnMouseClicked(IndexedHit hitInfo)
     {
-        // TODO: Do only when powerups are active.
-        //OnMouseClicked();
-    }
-
-    public void OnMouseClicked()
-    {
-        if (!alive)
+        if (!alive || hitInfo.index > 2)
         {
             return;
         }
@@ -58,11 +52,15 @@ public class IndieDevBehavior : BillboardBehavior
         alive = false;
         //transform.collider.active = false;
         GlobalObjects.GetGlobbalGameState().addkillscore();
+
+        Vector3 offset;
         if (runDirection.x > 0)
-            Instantiate(Blood, transform.localPosition + new Vector3(-0.7f, -0.7f, 0), transform.rotation);
+            offset = new Vector3(-0.7f, -0.7f, 0);
         else
-            Instantiate(Blood, transform.localPosition + new Vector3(0.7f, -0.7f, 0), transform.rotation);
-        
+            offset = new Vector3(0.7f, -0.7f, 0);
+
+        Transform escapee = (Transform) Instantiate(Blood, transform.localPosition + offset, transform.rotation);
+        GlobalObjects.GetGlobbalGameState().ScaleInstance(escapee);
     }
 
 	public Vector3 GetAIWorldTransform()
@@ -78,7 +76,7 @@ public class IndieDevBehavior : BillboardBehavior
 		Vector3 newWS = transform.TransformPoint(localPos);
 		Vector3 newSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(newWS);
 		Vector3 oldSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(transform.position);
-		runDirection = oldSS - newSS;
+        runDirection = newSS - oldSS;
 		return MathUtil.GetWorldPositionFromLocal(GlobalObjects.GetMapMesh(), localPos);
 	}
 	

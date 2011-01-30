@@ -22,7 +22,7 @@ public class BillboardBehavior : MonoBehaviour
 
         Vector3 toScreenVector = cam.transform.TransformDirection(Vector3.back);
 
-        var rollRotation = Quaternion.AngleAxis(roll + 180, objectFrontVector);
+        var rollRotation = Quaternion.AngleAxis(roll, objectFrontVector);
 
         var toScreenRotation = Quaternion.FromToRotation(objectFrontVector, toScreenVector);
 
