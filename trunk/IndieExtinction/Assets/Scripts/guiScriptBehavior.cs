@@ -41,7 +41,7 @@ public class guiScriptBehavior : MonoBehaviour
 
         if (alert != null && (!alertFlashing || ((int)(Time.time * 3) & 1) == 0))
         {
-            GUI.Label(new Rect((Screen.width * 0.6f), 5, 200, 200), alert);
+            GUI.Label(new Rect((Screen.width * 0.54f), 5, 200, 200), alert);
         }
     }
 
