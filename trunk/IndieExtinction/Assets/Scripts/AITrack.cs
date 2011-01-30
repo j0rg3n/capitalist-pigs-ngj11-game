@@ -26,7 +26,7 @@ namespace Irrelevant.Assets.Scripts.AI
 
 		public bool CanExtend()
 		{
-			return track.Count < MAX_LENGTH;
+			return track.Count < MAX_LENGTH - UnityEngine.Random.Range(0, 3);
 		}
 
 		public Track Extend(int newInd)
