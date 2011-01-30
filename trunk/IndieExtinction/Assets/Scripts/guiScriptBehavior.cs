@@ -29,7 +29,7 @@ public class guiScriptBehavior : MonoBehaviour
         countDown = minutes.ToString() + ":" + seconds.ToString("D2");
         int cash = globalgamestate.Score;
        // GUI.Label(new Rect(10, 10, 200, 20), score + cash);
-        GUI.Label(new Rect(50, 50, 200, 20), countDown);
+        GUI.Label(new Rect(5, 35, 200, 50), countDown);
         GUILayout.Label(score + cash);
         
         /*
@@ -41,7 +41,7 @@ public class guiScriptBehavior : MonoBehaviour
 
         if (alert != null && (!alertFlashing || ((int)(Time.time * 3) & 1) == 0))
         {
-            GUI.Label(new Rect(450, 50, 200, 20), alert);
+            GUI.Label(new Rect(450, 50, 200, 60), alert);
         }
     }
 
