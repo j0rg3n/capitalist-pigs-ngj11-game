@@ -9,15 +9,17 @@ namespace Irrelevant.Assets.Scripts
 {
 	public class IndieHouseLocation
 	{
-		public const int MAX_DEVS_IN_INDIE_HOUSE = 4;
-		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 3;
+		public const int MAX_DEVS_IN_INDIE_HOUSE = 20;
+		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 5;
+		public const float CURSE_DURATION = 2f;
 
 		public int houseTileInd = -1;
 		public Vector3 baseWorldPos;
 		public bool isPresent = false;
 		public int devsCount = 0;
-		public int waitingCount = 0;
-		List<DevGuy> waitingDevs = new List<DevGuy>();
+		public bool cursed = false;
+		public float cursedDuration = 0f;
+
 
 		IndieStudioBehavior studio;
 		public int locationInd;
@@ -29,7 +31,7 @@ namespace Irrelevant.Assets.Scripts
 
 		public bool CanCreate()
 		{
-			return waitingCount >= MIN_DEVS_TO_CREATE_A_HOUSE;
+			return !cursed;
 		}
 
 
@@ -52,19 +54,15 @@ namespace Irrelevant.Assets.Scripts
 			return false;
 		}
 
-		public void AddWaiting(DevGuy devGuy)
-		{
-			waitingCount++;
-			waitingDevs.Add(devGuy);
-		}
 
 		public void AddDev(DevGuy devGuy)
 		{
 			studio.IndieDevCount++;
+			// TODO:m make it go faster
 			IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
 		}
 
-		public void CreateHouse()
+		public void CreateHouse(List<IndieDevBehavior> waitingDevs)
 		{
 			System.Diagnostics.Debug.Assert(!isPresent);
 			isPresent = true;
@@ -78,12 +76,11 @@ namespace Irrelevant.Assets.Scripts
 
 			studio = buildingTransform.GetComponent<IndieStudioBehavior>();
 			studio.location = this;
-			studio.IndieDevCount = waitingCount;
-			waitingCount = 0;
+			studio.IndieDevCount = waitingDevs.Count;
 
-			foreach (DevGuy devGuy in waitingDevs)
+			foreach (IndieDevBehavior indieDev in waitingDevs)
 			{
-				IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
+				IndieStudioBehavior.Destroy(indieDev.gameObject);
 			}
 			waitingDevs.Clear();
 		}
@@ -93,8 +90,38 @@ namespace Irrelevant.Assets.Scripts
 			System.Diagnostics.Debug.Assert(isPresent);
 			isPresent = false;
 			studio = null;
+			//return;
+			
+			cursed = true;
+			cursedDuration = 0f;
+			/*
+			IndieDevBehavior[] indieDevs = GlobalObjects.GetIndieDevs();
+			foreach (IndieDevBehavior indieDev in indieDevs)
+			{
+				if (!indieDev.alive)
+					continue;
+				DevGuy devGuy = indieDev.aiDevGuy;
+				// update the track if it needs to
+				if (devGuy.currentTrack != null && devGuy.currentTrack.track.Contains(houseTileInd))
+				{
+					devGuy.currentTrack = null;
+				}
+			}
+			 */
 		}
 
+		public void UpdateCurseState(float fElapsedSeconds)
+		{
+			if (cursed)
+			{
+				cursedDuration += fElapsedSeconds;
+				if (cursedDuration >= CURSE_DURATION)
+				{
+					cursed = false;
+					cursedDuration = 0f;
+				}
+			}
+		}
 
 	}
 }

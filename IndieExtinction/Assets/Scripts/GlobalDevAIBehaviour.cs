@@ -9,7 +9,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public float BlockSize = 3f; // units width of a block
 	public int MapWidth = 60;
 	public int MapHeight = 40;
-	public float calmSpeed = 0.03f;
+	public float calmSpeed = 0.05f;
 	public float hasteSpeedMultiplier = 1.5f;
 
 	public int MapSize;
@@ -170,36 +170,15 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	bool CheckImmediateProximity(DevGuy devGuy, int devBlockInd, HouseIndices houseInds)
 	{
 		IndieHouseLocation location = GlobalObjects.indieHouseLocations[houseInds.houseInd];
-		bool overlaps = false;
-		if (!location.isPresent)
-		{
-			overlaps = location.houseTileInd == devBlockInd;
-		}
-		else
-		{
-			overlaps = location.Overlaps(devGuy);
-		}
-
+		bool overlaps = location.isPresent && location.Overlaps(devGuy);
 
 		if (overlaps)
 		{
-			if (location.isPresent)
-			{
-				if (!location.IsFull())
-				{
-					location.AddDev(devGuy);
-				}
+			if (!location.IsFull())
+			{	
+				location.AddDev(devGuy);
+				return true;
 			}
-			else
-			{
-				devGuy.waitingOthers = true;
-				location.AddWaiting(devGuy);
-				if (location.CanCreate())
-				{
-					location.CreateHouse();
-				}
-			}
-			return true;
 		}
 		return false;
 	}
@@ -232,15 +211,62 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		fElapsedSeconds = Time.deltaTime; // seconds
 		destHouseInds.Clear();
 
+		IndieDevBehavior[] indieDevs = GlobalObjects.GetIndieDevs();
+		foreach (IndieDevBehavior indieDev in indieDevs)
+		{
+			if (!indieDev.alive)
+				continue;
+			indieDev.aiDevGuy.waiting = false;
+		}
+
 		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
 		{
-			if (!GlobalObjects.indieHouseLocations[h].isPresent || !GlobalObjects.indieHouseLocations[h].IsFull())
+			GlobalObjects.indieHouseLocations[h].UpdateCurseState(fElapsedSeconds);
+
+			if (!GlobalObjects.indieHouseLocations[h].isPresent && !GlobalObjects.indieHouseLocations[h].cursed)
+			{
+				int waitingCount = 0;
+				IndieDevBehavior[] indies = GlobalObjects.GetIndieDevs();
+				List<IndieDevBehavior> waitingDevs = new List<IndieDevBehavior>();
+				bool enough = false;
+				foreach (IndieDevBehavior indieDev in indies)
+				{
+					if (!indieDev.alive)
+						continue;
+					int devBlock = waver.PositionToBlockIndex(indieDev.aiDevGuy.Position);
+					if (devBlock == GlobalObjects.indieHouseLocations[h].houseTileInd)
+					{
+						if (enough)
+						{
+							indieDev.aiDevGuy.waiting = false;
+						}
+						else
+						{
+							++waitingCount;
+							indieDev.aiDevGuy.waiting = true;
+							indieDev.aiDevGuy.waited += fElapsedSeconds;
+							waitingDevs.Add(indieDev);
+							if (waitingCount == IndieHouseLocation.MAX_DEVS_IN_INDIE_HOUSE)
+							{
+								enough = true;
+							}
+						}
+					}
+				}
+				if (waitingCount >= IndieHouseLocation.MIN_DEVS_TO_CREATE_A_HOUSE)
+				{
+					GlobalObjects.indieHouseLocations[h].CreateHouse(waitingDevs);
+				}
+			}
+
+			if ((!GlobalObjects.indieHouseLocations[h].isPresent && !GlobalObjects.indieHouseLocations[h].cursed) 
+				|| !GlobalObjects.indieHouseLocations[h].IsFull())
 			{
 				destHouseInds.Add(new HouseIndices(GlobalObjects.indieHouseLocations[h].houseTileInd, h));
 			}
 		}
 
-		IndieDevBehavior[] indieDevs = GlobalObjects.GetIndieDevs();
+		indieDevs = GlobalObjects.GetIndieDevs();
 		List<DevToProcess> devsToProcess = new List<DevToProcess>();
 
 		foreach (IndieDevBehavior indieDev in indieDevs)
@@ -248,30 +274,45 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			if (!indieDev.alive)
 				continue;
 
-			DevGuy devGuy = indieDev.aiDevGuy;
-			int currentBlock = waver.PositionToBlockIndex(devGuy.Position);
+			if (indieDev.aiDevGuy.waiting)
+			{
+				if (indieDev.aiDevGuy.waited >= DevGuy.MAX_WAIT)
+				{
+					indieDev.aiDevGuy.waited = 0f;
+					indieDev.aiDevGuy.waiting = false;
+				}
+				else
+				{
+					continue;
+				}
+			}
+
+			DevToProcess d = new DevToProcess();
+			d.devGuy = indieDev.aiDevGuy;
+			d.currentBlock = waver.PositionToBlockIndex(d.devGuy.Position);
+
 			for (int h = 0; h < destHouseInds.Count; h++)
 			{
-				bool bSkip = CheckImmediateProximity(devGuy, currentBlock, destHouseInds[h]);
+				bool bSkip = CheckImmediateProximity(d.devGuy, d.currentBlock, destHouseInds[h]);
 				if (bSkip)
 					continue;
 			}
 			
 			// update the track if it needs to
-			if (devGuy.currentTrack != null && devGuy.currentTrack.Length() == 0)
-				devGuy.currentTrack = null;
+			if (d.devGuy.currentTrack != null && d.devGuy.currentTrack.Length() == 0)
+				d.devGuy.currentTrack = null;
 
 			int p1SPInd = startSpawnPointInd;
 			// TODO:m optimize by not doing stuff for the second spawn point if too slow
-			int p2SPInd = devGuy.lastHousePointInd >= 0 ? devGuy.lastHousePointInd : startSpawnPointInd;
+			int p2SPInd = d.devGuy.lastHousePointInd >= 0 ? d.devGuy.lastHousePointInd : startSpawnPointInd;
 
-			if (devGuy.currentTrack != null)
+			if (d.devGuy.currentTrack != null)
 			{
-				System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p1SPInd));
-				System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p2SPInd));
+				System.Diagnostics.Debug.Assert(!d.devGuy.currentTrack.HasBlock(p1SPInd));
+				System.Diagnostics.Debug.Assert(!d.devGuy.currentTrack.HasBlock(p2SPInd));
 
-				if (waver.WaverIsSPIsTooClose(p1SPInd, p2SPInd, devGuy.currentTrack.PeekNext()))
-					devGuy.currentTrack = null;
+				if (waver.WaverIsSPIsTooClose(p1SPInd, p2SPInd, d.devGuy.currentTrack.PeekNext()))
+					d.devGuy.currentTrack = null;
 			}
 
 			// probably not necessary - was needed since tiles could rotate ad block the path
@@ -283,11 +324,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			//        devGuy.currentTrack = null;
 			//}
 
-			DevToProcess d = new DevToProcess();
-			d.devGuy = devGuy;
-			d.hasTrack = devGuy.currentTrack != null;
+			d.hasTrack = d.devGuy.currentTrack != null;
 			//UnityEngine.Debug.Log(string.Format("pos {0} {1}", devGuy.Position.x, devGuy.Position.y));
-			d.currentBlock = currentBlock;
 			//UnityEngine.Debug.Log(string.Format("current block ind {0}", d.currentBlock));
 			d.p1SPInd = p1SPInd;
 			d.p2SPInd = p2SPInd;
@@ -335,9 +373,12 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		foreach (DevToProcess d in devsToProcess)
 		{
 			if (d.devGuy.currentTrack == null)
+			{
 				continue;
+			}
 			// do smooth movement
 			int nextBlockInd = d.devGuy.currentTrack.PeekNext();
+
 			//UnityEngine.Debug.Log(string.Format("next block ind {0}", nextBlockInd));
 			//Debug.Print(String.Format("{0}, cur {1}, next {2}, track: {3}", devGuy.type, currentBlock, nextBlockInd, devGuy.currentTrack.ToSrting()));
 			bool areWeThereYet = nextBlockInd != d.currentBlock ? MoveTowards(d.devGuy, d.currentBlock, nextBlockInd, (d.devGuy.currentTrack.makeHaste ? hasteSpeedMultiplier * calmSpeed : calmSpeed)) : true;
@@ -351,28 +392,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	}
 
 
-	/*
-	bool UpdateDevGuy(DevGuy devGuy)
-    {
-        //int i, j;
-        //SetMatrixValue(devGuy.Position, -1, out i, out j); // TODO:m what's this for?
-
-        if (devGuy.currentTrack == null)
-            return false; // don't skip
-
-        // do smooth movement
-        int nextBlockInd = devGuy.currentTrack.PeekNext();
-        //Debug.Print(String.Format("{0}, cur {1}, next {2}, track: {3}", devGuy.type, currentBlock, nextBlockInd, devGuy.currentTrack.ToSrting()));
-		bool areWeThereYet = nextBlockInd != d.currentBlock ? MoveTowards(devGuy, currentBlock, nextBlockInd, (devGuy.currentTrack.makeHaste ? hasteSpeed : calmSpeed)) : true;
-        if (areWeThereYet)
-        {
-            if (nextBlockInd != currentBlock)
-                devGuy.lastVisitedBlockIndex = currentBlock;
-            currentBlock = devGuy.currentTrack.PopNext();
-        }
-
-        return false; // don't skip
-    }*/
 
 	public Vector2 ValidatePosition(Vector2 Position)
 	{
