@@ -58,10 +58,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
 
             if (pie <= 0)
             {
-                //  TOD: Load end fo game scjlien.
-
                 GameOver = true;
-                persistentGameState.LoadDeath();
                 return;
             }
         }
