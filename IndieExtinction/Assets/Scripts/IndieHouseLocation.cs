@@ -9,8 +9,8 @@ namespace Irrelevant.Assets.Scripts
 {
 	public class IndieHouseLocation
 	{
-		public const int MAX_DEVS_IN_INDIE_HOUSE = 25;
-		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 5;
+		public const int MAX_DEVS_IN_INDIE_HOUSE = 20;
+		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 10;
 		public const float CURSE_DURATION = 2f;
 
 		public int houseTileInd = -1;
@@ -42,7 +42,7 @@ namespace Irrelevant.Assets.Scripts
 			Vector3 worldPos = devGuy.indieDevBehaviour.GetAIWorldTransform();
 			if (isPresent)
 			{
-				MeshFilter studioMesh = studio.GetComponent<MeshFilter>();
+				MeshFilter studioMesh = studio.GetComponent<MeshFilter>(); // TODO:m this has been deleted :(
 				Transform transform = studio.GetComponent<Transform>();
 
 				var bounds = studioMesh.mesh.bounds;
