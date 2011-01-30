@@ -9,7 +9,7 @@ namespace Irrelevant.Assets.Scripts.AI
 		public bool needsRun = true;
 
 
-		public const int STAY_AWAY_FROM_SP_DIST_DEFENSIVE = 3;
+		public const int STAY_AWAY_FROM_SP_DIST_DEFENSIVE = 5;
 		public static int CompareTracks(Track a, Track b)
 		{
 			return b.grade - a.grade;
@@ -241,11 +241,12 @@ namespace Irrelevant.Assets.Scripts.AI
 		const int HasHouseWeight = 8;
 		const int IsTowardsSPWeight = 11;
 
-		public Track ChooseTrack(int p1SPInd, int p2SPInd, int lastVisitedBlock)
+		public List<Track> ChooseTracks(int cnt, int p1SPInd, int p2SPInd, int lastVisitedBlock)
 		{
+			List<Track> list = new List<Track>();
 			if (completeTracks.Count == 0)
 			{
-				return null;
+				return list;
 			}
 
 			// evaluate tracks
@@ -274,6 +275,45 @@ namespace Irrelevant.Assets.Scripts.AI
 			}
 
 			completeTracks.Sort(trackComparison);
+			bool stopAtNegative = completeTracks[0].grade >= 0;
+
+			if (stopAtNegative)
+			{
+				for (int i = 0; i < completeTracks.Count; ++i)
+				{
+					if (completeTracks[i].grade >= 0)
+					{
+						list.Add(completeTracks[i].Clone());
+						if (list.Count == cnt)
+							break;
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < completeTracks.Count; ++i)
+				{
+					list.Add(completeTracks[i].Clone());
+					if (list.Count == cnt)
+						break;
+				}
+			}
+
+			if (list.Count == 0)
+			{
+				return list;
+			}
+
+			int chosenCnt = list.Count;
+			for (int i = chosenCnt; i < cnt; ++i)
+			{
+				list.Add(list[i % chosenCnt].Clone());
+			}
+			/*
 			int bestGrade = completeTracks[0].grade;
 
 			int bestGradeCnt = 1;
@@ -301,7 +341,8 @@ namespace Irrelevant.Assets.Scripts.AI
 					}
 				}
 			}
-			return chosen;
+			 */
+			return list;
 		}
 	}
 }
