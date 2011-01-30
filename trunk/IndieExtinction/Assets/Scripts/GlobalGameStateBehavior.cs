@@ -7,6 +7,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public int score;
     public int kill = 10;
     public float pie = 100;
+    public float instanceScale = 2;
 
     public AudioClip introClip;
     public AudioClip inGameClip;
@@ -33,6 +34,11 @@ public class GlobalGameStateBehavior : MonoBehaviour
         Pie -= 10;
         audio.PlayOneShot(gameDevEnded);
         lastPieLossTime = Time.time;
+    }
+
+    public void ScaleInstance(Transform newInstance)
+    {
+        newInstance.localScale = newInstance.localScale * GlobalObjects.GetGlobbalGameState().instanceScale;
     }
 
     private float Pie

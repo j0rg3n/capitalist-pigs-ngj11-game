@@ -106,6 +106,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					var offset = startBuilding.GetComponent<MeshFilter>().mesh.bounds.extents;
 					offset.Scale(Vector3.up);
 					startBuilding.position = baseWorldPos + offset;
+                    GlobalObjects.GetGlobbalGameState().ScaleInstance(startBuilding);
 
 					startLocation = new IndieHouseLocation();
 					startLocation.houseTileInd = waver.BlockCoordsToIndex(i, j);
@@ -128,21 +129,22 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			}
         }
 
-		/*
-		for (int i = 25; i < 28; ++i)
-		{
-			for (int j = 1; j < 4; ++j)
-			{
-				if (levelMatrix[i, MapHeight - j - 1] > 0)
-				{
-					Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
-					Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
-					newDev.position = baseWorldPos;
-				}
-			}
-		}*/
+        /*
+        for (int i = 25; i < 28; ++i)
+        {
+            for (int j = 1; j < 4; ++j)
+            {
+                if (levelMatrix[i, MapHeight - j - 1] > 0)
+                {
+                    Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
+                    Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
+                    newDev.position = baseWorldPos;
+                    GlobalObjects.GetGlobbalGameState().ScaleInstance(newDev);
+                }
+            }
+        }*/
 
-		System.Diagnostics.Debug.Assert(bFoundStartingPoint);
+        System.Diagnostics.Debug.Assert(bFoundStartingPoint);
 		CalculateInitialRoutes(); // TODO:m call this somewhere else
 	}
 
@@ -409,18 +411,19 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
 					//UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
-					/*
-					for (int ii = 0; ii < devsToProcess[k].devGuy.currentTrack.track.Count; ++ii)
-					{
-						int ind1, ind2;
-						waver.BlockIndexToCoords(devsToProcess[k].devGuy.currentTrack.track[ii], out ind1, out ind2);
-						Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), ind1 + .5f, ind2 + .5f, MapWidth, MapHeight);
-						Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
-						newDev.position = baseWorldPos;
-					}
-					UnityEngine.Debug.Log(string.Format("{0}", devsToProcess[k].devGuy.currentTrack.ToSrting()));
-					 */
-				}
+                    /*
+                    for (int ii = 0; ii < devsToProcess[k].devGuy.currentTrack.track.Count; ++ii)
+                    {
+                        int ind1, ind2;
+                        waver.BlockIndexToCoords(devsToProcess[k].devGuy.currentTrack.track[ii], out ind1, out ind2);
+                        Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), ind1 + .5f, ind2 + .5f, MapWidth, MapHeight);
+                        Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
+                        newDev.position = baseWorldPos;
+                        GlobalObjects.GetGlobbalGameState().ScaleInstance(newDev);
+                    }
+                    UnityEngine.Debug.Log(string.Format("{0}", devsToProcess[k].devGuy.currentTrack.ToSrting()));
+                     */
+                }
 			}
 			i=j;
 		}

@@ -74,6 +74,7 @@ namespace Irrelevant.Assets.Scripts
 			offset.Scale(Vector3.up);
 
             buildingTransform.position = baseWorldPos + offset;
+            GlobalObjects.GetGlobbalGameState().ScaleInstance(buildingTransform);
 
 			studio = buildingTransform.GetComponent<IndieStudioBehavior>();
 			studio.location = this;
