@@ -3,4 +3,6 @@ guid: 4bb118336019d0149819fd0a0fcaa5e9
 MonoImporter:
   importerVersion: 1
   defaultReferences:
-    indieDevPrefab: {fileID: 400000, guid: f952edc1eafce2543a1d0eb5fe94b114, type: 2}
+    indieDevFemalePrefab: {}
+    indieDevMalePrefab: {}
+    Sound_explotion: {fileID: 8300000, guid: 1161ab3a83318fd42ba628df42d2c29e, type: 1}

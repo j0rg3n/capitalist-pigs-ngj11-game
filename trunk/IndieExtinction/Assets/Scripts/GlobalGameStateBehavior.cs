@@ -33,7 +33,13 @@ public class GlobalGameStateBehavior : MonoBehaviour
         {
             float now = Time.time;
             visualPieCurve = AnimationCurve.EaseInOut(now, VisualPie, now + .3f, value);
-            pie = value; 
+            pie = value;
+
+            if (pie <= 0)
+            {
+                //  TOD: Load end fo game scjlien.
+                Application.LoadLevel(0);
+            }
         }
     }
 
@@ -96,12 +102,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         if (gameScene)
         {
             var healtPie = GlobalObjects.GetHealthPie();
-            healtPie.amount = VisualPie / 100.0f;
-
-            if (Random.Range(0, 25) == 1)
-            {
-                Pie -= 20;
-            }
+            healtPie.amount = 1 - VisualPie / 100.0f;
         }
         else
         {
