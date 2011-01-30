@@ -38,8 +38,19 @@ public class IndieDevBehavior : BillboardBehavior
 		aiDevGuy.Position = MathUtil.GetLocalPositionFromWorldCorrected(GlobalObjects.GetMapMesh(), transform.position);
 	}
 
+    public void OnBigMouseClicked()
+    {
+        // TODO: Do only when powerups are active.
+        //OnMouseClicked();
+    }
+
     public void OnMouseClicked()
     {
+        if (!alive)
+        {
+            return;
+        }
+
         PlayDeathSounds();
         GetComponent<SpriteAnimator>().currentFrame = 1;
         GetComponent<SpriteAnimator>().Frames = 1;

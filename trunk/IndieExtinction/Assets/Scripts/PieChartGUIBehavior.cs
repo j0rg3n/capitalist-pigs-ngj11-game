@@ -10,6 +10,7 @@ public class PieChartGUIBehavior : MonoBehaviour
     public Vector2 alignment = new Vector2(.5f, .5f);
     public Texture2D rightBackground;
     public Texture2D right;
+    public Texture2D overlay;
     public float amount = 0;
     public bool anchorToScreen;
 
@@ -50,6 +51,11 @@ public class PieChartGUIBehavior : MonoBehaviour
             DrawRotatedTexture(clockRect, right, .5f);
             DrawRotatedTexture(clockRect, rightBackground, wrappedAmount);
             DrawRotatedTexture(clockRect, right, 0);
+        }
+
+        if (overlay != null)
+        {
+            DrawRotatedTexture(clockRect, overlay, 0);
         }
     }
 

@@ -62,7 +62,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
         }
 	}
 
-    public void OnMouseClicked(RaycastHit hitInfo)
+    public void OnMouseClicked(IndexedHit hitInfo)
     {
         if (!isSetForDestruction)
         {
