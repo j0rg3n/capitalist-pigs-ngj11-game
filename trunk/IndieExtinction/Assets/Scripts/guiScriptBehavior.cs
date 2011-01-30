@@ -7,6 +7,8 @@ public class guiScriptBehavior : MonoBehaviour
     string countDown;
     int minutes;
     int seconds;
+    public string alert;
+    public bool alertFlashing;
     public Texture buttonTexture;
     public Font ft;
 
@@ -29,9 +31,17 @@ public class guiScriptBehavior : MonoBehaviour
        // GUI.Label(new Rect(10, 10, 200, 20), score + cash);
         GUI.Label(new Rect(50, 50, 200, 20), countDown);
         GUILayout.Label(score + cash);
+        
+        /*
         if (GUI.Button(new Rect(10, 100, 40, 40), buttonTexture))
         {
             Debug.Log("Clicked the button with an image");
+        }
+        */
+
+        if (alert != null && (!alertFlashing || ((int)(Time.time * 3) & 1) == 0))
+        {
+            GUI.Label(new Rect(450, 50, 200, 20), alert);
         }
     }
 

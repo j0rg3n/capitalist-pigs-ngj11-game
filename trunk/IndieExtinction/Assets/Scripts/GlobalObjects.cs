@@ -23,10 +23,20 @@ public class GlobalObjects
         return GameObject.Find(HEALTH_PIE).GetComponent<PieChartGUIBehavior>();
     }
 
+    public static guiScriptBehavior GetGUIScriptBehavior()
+    {
+        return FindObjectOfType<guiScriptBehavior>();
+    }
+
 	public static IndieDevBehavior[] GetIndieDevs()
 	{
 		return (IndieDevBehavior[])Resources.FindObjectsOfTypeAll(typeof(IndieDevBehavior));
 	}
+
+    public static StudioBehavior GetStudio()
+    {
+        return FindObjectOfType<StudioBehavior>();
+    }
 
 	public static GlobalDevAIBehaviour GetDevAIBehaviour()
 	{
