@@ -8,12 +8,18 @@ public class IndieDevBehavior : BillboardBehavior
     public Material Death;
     public Material run;
     public Transform Blood;
-    private bool alive;
+    public bool alive;
     
     public Vector3 RunDirection
     {
         get { return runDirection; }
     }
+
+	IndieDevBehavior()
+	{
+		aiDevGuy = new DevGuy();
+		aiDevGuy.indieDevBehaviour = this;
+	}
 
 	public override void Start () 
     {
@@ -24,7 +30,17 @@ public class IndieDevBehavior : BillboardBehavior
         var rotation = Quaternion.AngleAxis(angle, Vector3.up);
         var directionTransform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
         runDirection = directionTransform.MultiplyVector(Vector3.forward);
-		
+
+		//UnityEngine.Debug.Log(string.Format("worldPos {0} {1} {2}", transform.position.x, transform.position.y, transform.position.z));
+		Vector3 localPos = MathUtil.GetLocalPositionFromWorld(GlobalObjects.GetMapMesh(), transform.position);
+		localPos.x = -localPos.x;
+		localPos.y = 0f;
+		localPos.x += 5f;
+		localPos.z += 5f;
+		localPos.x *= 0.1f;
+		localPos.z *= 0.1f;
+		//UnityEngine.Debug.Log(string.Format("localPos {0} {1} {2}", localPos.x, localPos.y, localPos.z));
+		aiDevGuy.Position = new Vector2(localPos.x, localPos.z);
 	}
 
     public void OnMouseClicked()
@@ -46,9 +62,18 @@ public class IndieDevBehavior : BillboardBehavior
     {
         if (alive)
 		{
-            var pos = transform.position;
-            pos += runDirection * Time.deltaTime;
-            transform.position = pos;
+			Vector3 oldLocalPos = MathUtil.GetLocalPositionFromWorld(GlobalObjects.GetMapMesh(), transform.position);
+			Vector3 localPos = new Vector3(aiDevGuy.Position.x, 0, aiDevGuy.Position.y);
+			localPos.x *= 10f;
+			localPos.z *= 10f;
+			localPos.x -= 5f;
+			localPos.z -= 5f;
+			localPos.y = oldLocalPos.y;
+			localPos.x = -localPos.x;
+			transform.position = MathUtil.GetWorldPositionFromLocal(GlobalObjects.GetMapMesh(), localPos);
+            //var pos = transform.position;
+            //pos += runDirection * Time.deltaTime;
+            //transform.position = pos;
 		}
 
         base.Update();

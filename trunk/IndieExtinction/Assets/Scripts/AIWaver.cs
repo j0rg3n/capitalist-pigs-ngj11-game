@@ -69,7 +69,7 @@ namespace Irrelevant.Assets.Scripts.AI
 
 		public Vector2 BlockCoordsToPosition(int i, int j)
 		{
-			return new Vector2(i * AI.BlockSize + AI.BlockSize * 0.5f, j * AI.BlockSize + AI.BlockSize * 0.5f);
+			return new Vector2(((float)i + 0.5f) / (float)AI.MapWidth, 	((float)j + 0.5f) / (float)AI.MapHeight);
 		}
 
 		public Vector2 BlockIndexToPosition(int ind)
@@ -81,8 +81,13 @@ namespace Irrelevant.Assets.Scripts.AI
 
 		public int PositionToBlockIndex(Vector2 pos)
 		{
-			int i = (int)(pos.x / AI.BlockSize);
-			int j = (int)(pos.y / AI.BlockSize);
+			//int i = (int)(pos.x / AI.BlockSize);
+			//int j = (int)(pos.y / AI.BlockSize);
+			int i = (int)(pos.x * AI.MapWidth);
+			int j = (int)(pos.y * AI.MapHeight);
+			i = Mathf.Clamp(i, 0, AI.MapWidth-1);
+			j = Mathf.Clamp(j, 0, AI.MapHeight-1);
+			//UnityEngine.Debug.Log(string.Format("coords {0} {1}", i,j));
 			System.Diagnostics.Debug.Assert(0 <= i && i < AI.MapWidth);
 			System.Diagnostics.Debug.Assert(0 <= j && j < AI.MapHeight);
 			return BlockCoordsToIndex(i, j);
@@ -92,49 +97,61 @@ namespace Irrelevant.Assets.Scripts.AI
 		{
 			int i, j;
 			BlockIndexToCoords(blockInd, out i, out j);
-			return map[i, j] > 1;
+			//Debug.Log(string.Format("block {0} i {1} j {2} map {3}", blockInd, i, j, map[i, j]));
+			return map[i, j] > 0;
 		}
 
-		void FindNeightbourBlocks(int block, ref int[] neighbours)
+		int FindNeightbourBlocks(int block, ref int[] neighbours)
 		{
-			// TODO:m should not wrap around
+			int cnt = 0;
+			//Debug.Log(string.Format("block {0}", block));
 			// up
-			neighbours[0] = block - AI.MapWidth;
-			if (neighbours[0] < 0)
-				neighbours[0] += AI.MapSize;
+			neighbours[cnt] = block - AI.MapWidth;
+			//Debug.Log(string.Format("n {0}", neighbours[cnt]));
+			if (neighbours[cnt] >= 0)
+			{
+				cnt++;
+			}
+			//Debug.Log(string.Format("cnt {0}", cnt));
 
 			// down
-			neighbours[1] = block + AI.MapWidth;
-			if (neighbours[1] >= AI.MapSize)
-				neighbours[1] -= AI.MapSize;
+			neighbours[cnt] = block + AI.MapWidth;
+			//Debug.Log(string.Format("n {0}", neighbours[cnt]));
+			if (neighbours[cnt] < AI.MapSize)
+			{
+				cnt++;
+			}
+			//Debug.Log(string.Format("cnt {0}", cnt));
 
 			// left
-			neighbours[2] = block - 1;
-			if (neighbours[2] < 0)
-				neighbours[2] += AI.MapSize;
-			else if ((neighbours[2] + 1) % AI.MapWidth == 0)  // block is in left screen border
+			neighbours[cnt] = block - 1;
+			//Debug.Log(string.Format("n {0}", neighbours[cnt]));
+			if (neighbours[cnt] >= 0 && (block) % AI.MapWidth != 0)
 			{
-				neighbours[2] += AI.MapWidth;
+				cnt++;
 			}
+			//Debug.Log(string.Format("cnt {0}", cnt));
 
 			// right
-			neighbours[3] = block + 1;
-			if (neighbours[3] >= AI.MapSize)
-				neighbours[3] -= AI.MapSize;
-			else if ((neighbours[3]) % AI.MapWidth == 0)  // block is in right screen border
+			neighbours[cnt] = block + 1;
+			//Debug.Log(string.Format("n {0}", neighbours[cnt]));
+			if (neighbours[cnt] < AI.MapSize && (neighbours[cnt]) % AI.MapWidth != 0)  // block is in right screen border
 			{
-				neighbours[3] -= AI.MapWidth;
+				cnt++;
 			}
+			//Debug.Log(string.Format("cnt {0}", cnt));
+			return cnt;
 		}
 
 
 		// returns true if atleas one track exists
 		public bool StartWave(int start, int[,] map) // 0 - not passable, 1 - rotating, 2 - empty (passable))
 		{
+			//Debug.Log(string.Format("start {0}", start));
 			tracks.Clear();
 			completeTracks.Clear();
 
-			Track stratTrack = new Track(start);
+			Track stratTrack = new Track(start, this);
 			tracks.Add(stratTrack);
 
 			int[] neighbours = new int[4] { 0, 0, 0, 0 };
@@ -144,11 +161,15 @@ namespace Irrelevant.Assets.Scripts.AI
 				Track nextTrack = tracks[0];
 				tracks.RemoveAt(0);
 				int endBlock = nextTrack.GetLast();
-				FindNeightbourBlocks(endBlock, ref neighbours);
+				int neighbourCnt = FindNeightbourBlocks(endBlock, ref neighbours);
 				bool foundNeighbour = false;
-				for (int i = 0; i < 4; ++i)
+				for (int i = 0; i < neighbourCnt; ++i)
 				{
-					if (PassableBlock(map, neighbours[i]) && !nextTrack.HasBlock(neighbours[i]))
+					System.Diagnostics.Debug.Assert(neighbours[i] >= 0 && neighbours[i] < AI.MapSize);
+					bool passable = PassableBlock(map, neighbours[i]);
+					bool notIn = !nextTrack.HasBlock(neighbours[i]);
+					//UnityEngine.Debug.Log(string.Format("n {0} {1} {2} {3}", i, neighbours[i], passable, notIn));
+					if (passable && notIn)
 					{
 						foundNeighbour = true;
 						tracks.Add(nextTrack.Extend(neighbours[i]));

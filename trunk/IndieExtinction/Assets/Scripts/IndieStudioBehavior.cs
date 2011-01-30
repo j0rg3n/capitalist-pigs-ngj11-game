@@ -20,7 +20,8 @@ public class IndieStudioBehavior : StudioBehaviorBase
         
         if (elapsed > devTimeSeconds)
         {
-            SpawnIndieDevs(indieDevCount);
+			System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
+            SpawnIndieDevs(indieDevCount, location.houseTileInd);
 			location.HouseDestroyed();
             Destroy(gameObject);
             return;
