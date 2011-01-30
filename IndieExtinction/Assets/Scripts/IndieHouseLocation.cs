@@ -80,7 +80,7 @@ namespace Irrelevant.Assets.Scripts
 			studio.IndieDevCount = waitingDevs.Count;
 
 			foreach (IndieDevBehavior indieDev in waitingDevs)
-			{
+			{	
 				IndieStudioBehavior.Destroy(indieDev.gameObject);
 			}
 			waitingDevs.Clear();
@@ -91,7 +91,9 @@ namespace Irrelevant.Assets.Scripts
 
 		public void HouseDestroyed()
 		{
-			System.Diagnostics.Debug.Assert(isPresent);
+			if (!isPresent)
+				return;
+			
 			isPresent = false;
 			studio = null;
 			//return;

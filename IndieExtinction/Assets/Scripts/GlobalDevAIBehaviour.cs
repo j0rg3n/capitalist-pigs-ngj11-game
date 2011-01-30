@@ -208,8 +208,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 	static int CompareDevsToProcess(DevToProcess a, DevToProcess b)
 	{
-		int ai = a.hasTrack ? -1 : a.currentBlock;
-		int bi = b.hasTrack ? -1 : b.currentBlock;
+		int ai = !a.hasTrack ? -1 : a.currentBlock;
+		int bi = !b.hasTrack ? -1 : b.currentBlock;
 		return bi - ai;
 	}
 
@@ -227,6 +227,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			if (!indieDev.alive)
 				continue;
 			indieDev.aiDevGuy.waiting = false;
+			indieDev.aiDevGuy.forcedNoWait = false;
 		}
 
 		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
@@ -252,13 +253,23 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 						}
 						else
 						{
-							++waitingCount;
-							indieDev.aiDevGuy.waiting = true;
-							indieDev.aiDevGuy.waited += fElapsedSeconds;
-							waitingDevs.Add(indieDev);
-							if (waitingCount >= IndieHouseLocation.MAX_DEVS_IN_INDIE_HOUSE)
+							if (indieDev.aiDevGuy.dontWait > 0)
 							{
-								enough = true;
+								indieDev.aiDevGuy.dontWait -= fElapsedSeconds;
+								indieDev.aiDevGuy.waiting = false;
+								indieDev.aiDevGuy.forcedNoWait = true;
+							}
+							else
+							{
+								++waitingCount;
+								indieDev.aiDevGuy.waiting = true;
+								indieDev.aiDevGuy.waited += fElapsedSeconds;
+								indieDev.aiDevGuy.dontWait = 0f;
+								waitingDevs.Add(indieDev);
+								if (waitingCount >= IndieHouseLocation.MAX_DEVS_IN_INDIE_HOUSE)
+								{
+									enough = true;
+								}
 							}
 						}
 					}
@@ -266,6 +277,17 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 				if (waitingCount >= IndieHouseLocation.MIN_DEVS_TO_CREATE_A_HOUSE)
 				{
 					GlobalObjects.indieHouseLocations[h].CreateHouse(waitingDevs);
+				}
+				else
+				{
+					foreach (IndieDevBehavior waitingDev in waitingDevs)
+					{
+						if (waitingDev.aiDevGuy.waited >= DevGuy.MAX_WAIT)
+						{
+							GlobalObjects.indieHouseLocations[h].HouseDestroyed(); // to curse it
+							break;
+						}
+					}
 				}
 			}
 
@@ -286,15 +308,25 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 			if (indieDev.aiDevGuy.waiting)
 			{
-				/*
 				if (indieDev.aiDevGuy.waited >= DevGuy.MAX_WAIT)
 				{
 					indieDev.aiDevGuy.waited = 0f;
 					indieDev.aiDevGuy.waiting = false;
+					indieDev.aiDevGuy.dontWait = DevGuy.DONT_WAIT;
+					indieDev.aiDevGuy.lastHousePointInd = waver.PositionToBlockIndex(indieDev.aiDevGuy.Position);
 				}
-				else */
+				else
 				{
 					continue;
+				}
+			}
+			else
+			{
+				if (!indieDev.aiDevGuy.forcedNoWait)
+				{
+					indieDev.aiDevGuy.waited = 0f;
+					indieDev.aiDevGuy.waiting = false;
+					indieDev.aiDevGuy.dontWait = 0f;
 				}
 			}
 
@@ -309,30 +341,14 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					continue;
 			}
 			
-			// update the track if it needs to
+			// update the track if it needs to	
 			if (d.devGuy.currentTrack != null && d.devGuy.currentTrack.Length() == 0)
+			{
 				d.devGuy.currentTrack = null;
+			}
 
 			int p1SPInd = startSpawnPointInd;
 			int p2SPInd = d.devGuy.lastHousePointInd >= 0 ? d.devGuy.lastHousePointInd : startSpawnPointInd;
-
-			if (d.devGuy.currentTrack != null)
-			{
-				System.Diagnostics.Debug.Assert(!d.devGuy.currentTrack.HasBlock(p1SPInd));
-				System.Diagnostics.Debug.Assert(!d.devGuy.currentTrack.HasBlock(p2SPInd));
-
-				if (waver.WaverIsSPIsTooClose(p1SPInd, p2SPInd, d.devGuy.currentTrack.PeekNext()))
-					d.devGuy.currentTrack = null;
-			}
-
-			// probably not necessary - was needed since tiles could rotate ad block the path
-			//if (devGuy.currentTrack != null)
-			//{
-			//    int icur, jcur;
-			//    Waver.BlockIndexToCoords(devGuy.currentTrack.PeekNext(), out icur, out jcur);
-			//    if (!Waver.PassableBlock(levelMatrix, devGuy.currentTrack.PeekNext()))
-			//        devGuy.currentTrack = null;
-			//}
 
 			d.hasTrack = d.devGuy.currentTrack != null;
 			//UnityEngine.Debug.Log(string.Format("pos {0} {1}", devGuy.Position.x, devGuy.Position.y));
@@ -356,19 +372,18 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 				++j;
 
 			Waver useWaver = waver;
-			bool usingDefaultWaver = true;
+			useWaver.needsRun = true;
 			
 			for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
 			{
 				if (GlobalObjects.indieHouseLocations[h].houseTileInd == devsToProcess[i].currentBlock)
 				{
 					useWaver = GlobalObjects.indieHouseLocations[h].waver;
-					usingDefaultWaver = false;
 					break;
 				}
 			}
 			
-			bool hasTracks = usingDefaultWaver ? useWaver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : useWaver.HasTracks();
+			bool hasTracks = useWaver.needsRun ? useWaver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : useWaver.HasTracks();
 			if (hasTracks)
 			{
 				for (int k = i; k < j; ++k)

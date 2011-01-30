@@ -17,10 +17,13 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         get { return indieDevCount; }
         set 
-        { 
-            startDevelopment = Development;
-            startTime = Time.time;
-            indieDevCount = value;
+        {
+			if (!isSetForDestruction)
+			{
+				startDevelopment = Development;
+				startTime = Time.time;
+				indieDevCount = value;
+			}
         }
     }
 
@@ -73,6 +76,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
             if (indieDevCount == 0)
             {
                 isSetForDestruction = true;
+				location.HouseDestroyed();
                 PlayRandomExplotionSound();
             }
         }
@@ -82,7 +86,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         if (Explotions.Length > 0)
         {
-            AudioClip explotion = Explotions[Random.Range(0, Explotions.Length)];
+            AudioClip explotion = Explotions[Random.Range(0, Explotions.Length-1)];
             if (explotion != null)
             {
                 audio.PlayOneShot(explotion);
@@ -94,7 +98,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     private IEnumerator DestroyAfterDelay(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-		location.HouseDestroyed();
+		//location.HouseDestroyed();
         Destroy(gameObject);
     }
 

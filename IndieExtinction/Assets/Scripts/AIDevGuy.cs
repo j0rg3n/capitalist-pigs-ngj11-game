@@ -12,7 +12,10 @@ namespace Irrelevant.Assets.Scripts.AI
 		public Track currentTrack;
 		public bool waiting = false;
 		public float waited = 0f;
+		public float dontWait = 0;
+		public bool forcedNoWait = false;
 		public const float MAX_WAIT = 6f;
+		public const float DONT_WAIT = 2f;
 
 		public int lastHousePointInd = -1;
 
