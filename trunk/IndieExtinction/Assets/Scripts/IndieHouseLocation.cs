@@ -11,7 +11,7 @@ namespace Irrelevant.Assets.Scripts
 	{
 		public const int MAX_DEVS_IN_INDIE_HOUSE = 20;
 		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 10;
-		public const float CURSE_DURATION = 2f;
+		public const float CURSE_DURATION = 4f;
 
 		public int houseTileInd = -1;
 		public Vector3 baseWorldPos;
@@ -85,6 +85,7 @@ namespace Irrelevant.Assets.Scripts
 			}
 			waitingDevs.Clear();
 
+			waver.AI = GlobalObjects.GetDevAIBehaviour();
 			waver.StartWave(houseTileInd, GlobalObjects.GetDevAIBehaviour().levelMatrix);
 		}
 
