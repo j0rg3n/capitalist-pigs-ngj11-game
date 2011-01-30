@@ -32,7 +32,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
         startTime = Time.time;
 	}
 	
-	void Update () 
+	void Update() 
     {
         var basePosition = MathUtil.GetBasePointWithAlignment(gameObject, new Vector2(.5f, 0));
         var label = transform.GetChild(0).GetComponent<GUIText>();
