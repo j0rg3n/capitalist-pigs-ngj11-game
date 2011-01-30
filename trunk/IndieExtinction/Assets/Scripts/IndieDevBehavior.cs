@@ -35,8 +35,11 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
         GlobalObjects.GetGlobbalGameState().addkillscore();
+        if (runDirection.x > 0)
+            Instantiate(Blood, transform.localPosition + new Vector3(0.7f, -0.7f, 0), transform.rotation);
+        else
+            Instantiate(Blood, transform.localPosition + new Vector3(-0.7f, -0.7f, 0), transform.rotation);
         
-        Instantiate(Blood, transform.position, transform.rotation);
     }
 	
 	public override void Update () 
