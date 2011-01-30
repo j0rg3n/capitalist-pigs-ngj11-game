@@ -17,7 +17,7 @@ public class SoftwareMouseCursor : MonoBehaviour
     bool peaked = false;
     void Start()  
     {
-        //Screen.showCursor = false;
+        Screen.showCursor = false;
         cursorTex = texArray[0];
      }  
     
