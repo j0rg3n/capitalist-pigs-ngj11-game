@@ -8,6 +8,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public int kill = 10;
     public float pie = 100;
     public float instanceScale = 2;
+    public int houseCount = 0;
 
     public AudioClip introClip;
     public AudioClip inGameClip;
@@ -107,6 +108,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         gameScene = GlobalObjects.GetSlideProjector() == null;
 
         score = 100;
+        score = 0;
 
         theAudioClip = gameScene ? inGameClip : introClip;
         GetComponent<AudioSource>().clip = theAudioClip;
@@ -120,6 +122,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         if (gameScene)
         {
             int houseCount = 0;
+           houseCount = 0;
             foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
             {
                 if (location.isPresent)

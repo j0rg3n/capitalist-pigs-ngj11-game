@@ -51,7 +51,18 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
         //transform.collider.active = false;
-        GlobalObjects.GetGlobbalGameState().addkillscore();
+
+
+        if (GlobalObjects.GetGlobbalGameState().houseCount == 0)
+        {
+            GlobalObjects.GetGlobbalGameState().addkillscore();
+            GlobalObjects.GetGlobbalGameState().addkillscore();
+        }
+        else
+        {
+            GlobalObjects.GetGlobbalGameState().addkillscore();
+        }
+
 
         Vector3 offset;
         if (runDirection.x > 0)

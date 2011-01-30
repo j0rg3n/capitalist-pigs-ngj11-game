@@ -20,7 +20,6 @@ namespace Irrelevant.Assets.Scripts
 		public bool cursed = false;
 		public float cursedDuration = 0f;
 
-
 		IndieStudioBehavior studio;
 		public int locationInd;
 
