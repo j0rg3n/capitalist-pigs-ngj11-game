@@ -39,7 +39,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         var basePosition = MathUtil.GetBasePointWithAlignment(gameObject, new Vector2(.5f, 0));
         var label = transform.GetChild(0).GetComponent<GUIText>();
-        label.text = string.Format("0x{0:X2}", indieDevCount);
+        label.text = indieDevCount.ToString();
         label.transform.position = new Vector2(basePosition.x / Screen.width,
             basePosition.y / Screen.height);
 
@@ -50,7 +50,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
             {
                 System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
 
-                GlobalObjects.GetGlobbalGameState().Pie -= 10;
+                GlobalObjects.GetGlobbalGameState().GameDeveloped();
                 SpawnIndieDevs(indieDevCount, location.houseTileInd);
                 location.HouseDestroyed();
                 Destroy(gameObject);
@@ -69,7 +69,6 @@ public class IndieStudioBehavior : StudioBehaviorBase
             IndieDevCount--;
             System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
 
-            GlobalObjects.GetGlobbalGameState().Pie -= 10;
             SpawnIndieDevs(1, location.houseTileInd);
             if (indieDevCount == 0)
             {

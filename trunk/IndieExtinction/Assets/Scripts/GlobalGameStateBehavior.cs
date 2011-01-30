@@ -9,6 +9,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
 
     public AudioClip introClip;
     public AudioClip inGameClip;
+    public AudioClip gameDevEnded;
     public Object nextScene;
 
     public void addkillscore()
@@ -26,7 +27,13 @@ public class GlobalGameStateBehavior : MonoBehaviour
         score *= badPie;
     }
 
-    public float Pie
+    public void GameDeveloped()
+    {
+        Pie -= 10;
+        audio.PlayOneShot(gameDevEnded);
+    }
+
+    private float Pie
     {
         get { return pie; }
         set 
