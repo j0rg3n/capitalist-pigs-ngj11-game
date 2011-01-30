@@ -4,7 +4,6 @@ public abstract class StudioBehaviorBase : MonoBehaviour
 {
     public Transform indieDevFemalePrefab;
     public Transform indieDevMalePrefab;
-    public AudioClip Sound_explotion;
 
     protected void SpawnIndieDevs(int count, int indieStudioAiTileInd)
     {
