@@ -1,7 +1,22 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class GlobalPickerBehavior : MonoBehaviour {
+public struct IndexedHit
+{
+    public RaycastHit hit;
+    public int index;
+}
+
+public sealed class BigHitInfo
+{
+    public IndexedHit pointHit;
+    public IndexedHit sphereHit;
+}
+
+public class GlobalPickerBehavior : MonoBehaviour 
+{
+    public const int SPHERE_CAST_RADIUS = 2;
 
 	// Use this for initialization
 	void Start () 
@@ -11,20 +26,42 @@ public class GlobalPickerBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (hit)
+        if (pointHits != null && pointHits.Length > 0)
         {
-            if (mouseDown)
+            for (int i = 0; i < pointHits.Length; ++i)
             {
-                hitInfo.transform.gameObject.SendMessage("OnMouseDown", hitInfo, SendMessageOptions.DontRequireReceiver);
-            }
+                IndexedHit hitInfo = new IndexedHit() { index = i, hit = pointHits[i] };
+                if (mouseDown)
+                {
+                    hitInfo.hit.transform.gameObject.SendMessage("OnMouseDown", hitInfo, SendMessageOptions.DontRequireReceiver);
+                }
 
-            if (mouseClick)
-            {
-                hitInfo.transform.gameObject.SendMessage("OnMouseClicked", hitInfo, SendMessageOptions.DontRequireReceiver);
-                print(hitInfo.transform.name + " clicked at " + hitInfo.point);
+                if (mouseClick)
+                {
+                    hitInfo.hit.transform.gameObject.SendMessage("OnMouseClicked", hitInfo, SendMessageOptions.DontRequireReceiver);
+                    print(hitInfo.hit.transform.name + " clicked at " + hitInfo.hit.point);
+                }
             }
         }
-    
+
+        if (sphereHits != null && sphereHits.Length > 0)
+        {
+            for (int i = 0; i < sphereHits.Length; ++i)
+            {
+                IndexedHit hitInfo = new IndexedHit() { index = i, hit = sphereHits[i] };
+                if (mouseDown)
+                {
+                    hitInfo.hit.transform.gameObject.SendMessage("OnBigMouseDown", hitInfo, SendMessageOptions.DontRequireReceiver);
+                }
+
+                if (mouseClick)
+                {
+                    hitInfo.hit.transform.gameObject.SendMessage("OnBigMouseClicked", hitInfo, SendMessageOptions.DontRequireReceiver);
+                    print(hitInfo.hit.transform.name + " big-clicked at " + hitInfo.hit.point);
+                }
+            }
+        }
+
         mouseClick = false;
     }
 
@@ -53,12 +90,15 @@ public class GlobalPickerBehavior : MonoBehaviour {
 
             var mouseRay = cam.ScreenPointToRay(mousePos);
 
-            hit = Physics.Raycast(mouseRay, out hitInfo);
+
+            pointHits = Physics.RaycastAll(mouseRay);
+            sphereHits = Physics.SphereCastAll(mouseRay, SPHERE_CAST_RADIUS);
         }
     }
 
     private bool hit;
-    private RaycastHit hitInfo;
+    private RaycastHit[] pointHits;
+    private RaycastHit[] sphereHits;
     private bool mouseDown;
     private bool mouseClick;
 }
