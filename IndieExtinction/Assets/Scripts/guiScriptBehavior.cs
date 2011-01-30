@@ -26,11 +26,15 @@ public class guiScriptBehavior : MonoBehaviour
         GUI.skin.font = ft;
         
         var globalgamestate = (GlobalGameStateBehavior)Object.FindObjectOfType(typeof(GlobalGameStateBehavior));
-        
-        var timeRemaining = globalgamestate.TimeRemaining;
-        minutes = ((int)timeRemaining / 60);
-        seconds = ((int)timeRemaining % 60);
-        countDown = minutes.ToString() + ":" + seconds.ToString("D2");
+
+        if (!globalgamestate.GameOver)
+        {
+            var timeRemaining = globalgamestate.TimeRemaining;
+            minutes = ((int)timeRemaining / 60);
+            seconds = ((int)timeRemaining % 60);
+            countDown = minutes.ToString() + ":" + seconds.ToString("D2");
+        }
+
         int cash = globalgamestate.Score;
         //GUI.Label(new Rect(10, 10, 200, 20), score + cash);
         GUI.Label(new Rect(5, 35, 200, 100), countDown);
@@ -52,6 +56,8 @@ public class guiScriptBehavior : MonoBehaviour
         {
             GUI.skin.font = GameOverFont;
             GUI.Label(new Rect(Screen.width/4, Screen.height/4, 500, 100), "GAME OVER");
+            GUI.skin.font = StatsFont;
+            GUI.Label(new Rect(Screen.width / 2, Screen.height / 3, 400, 100), "Final Score" + globalgamestate.score);
         }
     }
 
