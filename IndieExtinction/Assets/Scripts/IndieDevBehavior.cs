@@ -51,7 +51,7 @@ public class IndieDevBehavior : BillboardBehavior
     
     public void OnMouseClicked(IndexedHit hitInfo)
     {
-        if (!alive || hitInfo.index > 2)
+        if (!alive || hitInfo.index > 1)
         {
             return;
         }

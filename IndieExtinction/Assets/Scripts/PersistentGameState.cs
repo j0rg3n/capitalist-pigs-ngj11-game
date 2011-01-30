@@ -82,12 +82,12 @@ namespace Irrelevant.Assets.Scripts
 
         private int[][] waveSizes = new[] { 
             new[] { 16, 32, },
-            new[] { 32, 32, 32, 32, 40 } 
+            new[] { 28, 28, 32, 36, 42 } 
         };
         
         private float[][] waveTimes = new[] { 
             new float[] { 16, 12, },
-            new float[] { 16, 12,  9,  8,  8 }
+            new float[] { 16, 12,  11,  9,  7 }
         };
     }
 }
