@@ -52,6 +52,7 @@
      <Compile Include="Assets\Scripts\AITrack.cs" />
      <Compile Include="Assets\Scripts\AIWaver.cs" />
      <Compile Include="Assets\Scripts\BillboardBehavior.cs" />
+     <Compile Include="Assets\Scripts\Cursor.cs" />
      <Compile Include="Assets\Scripts\GlobalDevAIBehaviour.cs" />
      <Compile Include="Assets\Scripts\GlobalGameStateBehavior.cs" />
      <Compile Include="Assets\Scripts\GlobalObjects.cs" />
@@ -64,6 +65,8 @@
      <Compile Include="Assets\Scripts\PieChartGUIBehavior.cs" />
      <Compile Include="Assets\Scripts\RandomUtil.cs" />
      <Compile Include="Assets\Scripts\RunningManOscillateBehavior.cs" />
+     <Compile Include="Assets\Scripts\SlideRotateBehavior.cs" />
+     <Compile Include="Assets\Scripts\SoftwareMouseCursor.cs" />
      <Compile Include="Assets\Scripts\SpriteAnimator.cs" />
      <Compile Include="Assets\Scripts\StudioBehavior.cs" />
      <Compile Include="Assets\Scripts\StudioBehaviorBase.cs" />
