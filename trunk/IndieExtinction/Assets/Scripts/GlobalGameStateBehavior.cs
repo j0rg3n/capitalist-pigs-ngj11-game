@@ -110,6 +110,11 @@ public class GlobalGameStateBehavior : MonoBehaviour
     {
         get
         {
+			if (nonMusicTimer)
+			{
+				return Time.time - musicStopTime + theAudioClip.samples / theAudioClip.frequency;
+			}
+
             var themeAudioSource = GetComponent<AudioSource>();
             if (!themeAudioSource.isPlaying)
             {
@@ -200,6 +205,13 @@ public class GlobalGameStateBehavior : MonoBehaviour
         }
         else
         {
+			var themeAudioSource = GetComponent<AudioSource>();
+			if (!themeAudioSource.isPlaying && !nonMusicTimer)
+			{
+				nonMusicTimer = true;
+				musicStopTime = Time.time;
+			}
+
             float t = TimeElapsed;
 
             int slideIndex = -1;
@@ -245,6 +257,9 @@ public class GlobalGameStateBehavior : MonoBehaviour
     private float nextWaveTime = float.MaxValue;
     private int nextWaveIndex = 0;
     public bool gameOver = false;
+
+	private bool nonMusicTimer;
+	private float musicStopTime;
 
     // Slide 0 is the pause before the first actual slide.
     private float[] slideTimes = new float[] { 0,  
