@@ -60,7 +60,6 @@ namespace Irrelevant.Assets.Scripts
 		public void AddDev(DevGuy devGuy)
 		{
 			studio.IndieDevCount++;
-			// TODO:m make it go faster
 			IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
 		}
 
