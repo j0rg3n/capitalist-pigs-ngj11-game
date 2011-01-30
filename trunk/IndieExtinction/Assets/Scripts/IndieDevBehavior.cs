@@ -48,9 +48,9 @@ public class IndieDevBehavior : BillboardBehavior
         //transform.collider.active = false;
         GlobalObjects.GetGlobbalGameState().addkillscore();
         if (runDirection.x > 0)
-            Instantiate(Blood, transform.localPosition + new Vector3(0.7f, -0.7f, 0), transform.rotation);
-        else
             Instantiate(Blood, transform.localPosition + new Vector3(-0.7f, -0.7f, 0), transform.rotation);
+        else
+            Instantiate(Blood, transform.localPosition + new Vector3(0.7f, -0.7f, 0), transform.rotation);
         
     }
 

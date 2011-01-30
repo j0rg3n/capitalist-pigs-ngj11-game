@@ -94,6 +94,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     private IEnumerator DestroyAfterDelay(float seconds)
     {
         yield return new WaitForSeconds(seconds);
+		location.HouseDestroyed();
         Destroy(gameObject);
     }
 
