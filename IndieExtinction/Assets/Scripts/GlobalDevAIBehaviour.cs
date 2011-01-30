@@ -66,8 +66,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	{
 		waver.AI = this;
 
-        GetComponent<MeshRenderer>().material.mainTexture = mapFieldTexture;
-
 		MapWidth = mapFieldTexture.width;
 		MapHeight = mapFieldTexture.height;
 
