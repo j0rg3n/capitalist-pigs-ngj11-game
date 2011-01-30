@@ -403,6 +403,25 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			bool hasTracks = useWaver.needsRun ? useWaver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : useWaver.HasTracks();
 			if (hasTracks)
 			{
+				List<Track> tracks = useWaver.ChooseTracks(j-i, devsToProcess[i].p1SPInd, devsToProcess[i].p2SPInd, devsToProcess[i].devGuy.lastVisitedBlockIndex);
+				if (tracks.Count == 0)
+				{
+					UnityEngine.Debug.Log("NO Tracks???");
+					for (int k = i; k < j; ++k)
+					{
+						devsToProcess[k].devGuy.currentTrack = null;
+					}
+				}
+				else
+				{
+					System.Diagnostics.Debug.Assert(tracks.Count == j - i);
+					for (int k = i; k < j; ++k)
+					{
+						devsToProcess[k].devGuy.currentTrack = tracks[k-i];
+					}
+				}
+
+				/*
 				for (int k = i; k < j; ++k)
 				{
 					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
@@ -424,8 +443,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
                         GlobalObjects.GetGlobbalGameState().ScaleInstance(newDev);
                     }
                     UnityEngine.Debug.Log(string.Format("{0}", devsToProcess[k].devGuy.currentTrack.ToSrting()));
-                     */
                 }
+                */
 			}
 			i=j;
 		}
