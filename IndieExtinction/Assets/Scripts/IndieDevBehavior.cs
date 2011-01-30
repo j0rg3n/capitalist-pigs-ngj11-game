@@ -125,5 +125,5 @@ public class IndieDevBehavior : BillboardBehavior
 
     private Vector3 runDirection;
 
-	public DevGuy aiDevGuy; // TODO:m init this
+	public DevGuy aiDevGuy;
 }

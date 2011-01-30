@@ -23,12 +23,6 @@ namespace Irrelevant.Assets.Scripts.AI
 			lastHousePointInd = houseTileInd;
 		}
 
-		public void ResetAIData() // TODO:m call?
-		{
-			lastVisitedBlockIndex = -1;
-			currentTrack = null;
-		}
-
 	}
 
 }

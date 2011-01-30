@@ -312,7 +312,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 				d.devGuy.currentTrack = null;
 
 			int p1SPInd = startSpawnPointInd;
-			// TODO:m optimize by not doing stuff for the second spawn point if too slow
 			int p2SPInd = d.devGuy.lastHousePointInd >= 0 ? d.devGuy.lastHousePointInd : startSpawnPointInd;
 
 			if (d.devGuy.currentTrack != null)
@@ -416,7 +415,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public Vector2 ValidatePosition(Vector2 Position)
 	{
 		if (Position.x >= MapWidthUnits)
-			Position.x = MapWidthUnits; // TODO:m good enough or less?
+			Position.x = MapWidthUnits;
 		if (Position.x < 0f)
 			Position.x = 0f;
 		if (Position.y >= MapHeightUnits)
