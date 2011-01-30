@@ -33,10 +33,7 @@ public class IndieDevBehavior : BillboardBehavior
         times = 0.0f;
         GetComponent<SpriteAnimator>().SetMaterial(run);
         alive = true;
-        float angle = Random.Range(0f, 360f);
-        var rotation = Quaternion.AngleAxis(angle, Vector3.up);
-        var directionTransform = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
-        runDirection = directionTransform.MultiplyVector(Vector3.forward);
+		runDirection = new Vector3(0f, 0f, 0f);
 
 		aiDevGuy.Position = MathUtil.GetLocalPositionFromWorldCorrected(GlobalObjects.GetMapMesh(), transform.position);
 	}
@@ -67,6 +64,10 @@ public class IndieDevBehavior : BillboardBehavior
 		localPos.z -= 5f;
 		localPos.y = oldLocalPos.y;
 		localPos.x = -localPos.x;
+		Vector3 newWS = transform.TransformPoint(localPos);
+		Vector3 newSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(newWS);
+		Vector3 oldSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(transform.position);
+		runDirection = oldSS - newSS;
 		return MathUtil.GetWorldPositionFromLocal(GlobalObjects.GetMapMesh(), localPos);
 	}
 	
@@ -75,9 +76,6 @@ public class IndieDevBehavior : BillboardBehavior
         if (alive)
         {
             transform.position = GetAIWorldTransform();
-            //var pos = transform.position;
-            //pos += runDirection * Time.deltaTime;
-            //transform.position = pos;
         }
         else
         {

@@ -74,11 +74,6 @@ public class SpriteAnimator : MonoBehaviour {
 
     private Vector3 GetRunDirectionOnScreen()
     {
-        Camera camera = GlobalObjects.GetMainCamera();
-        var a = transform.position + GetComponent<IndieDevBehavior>().RunDirection;
-        var b = transform.position;
-        var aOnScreen = camera.WorldToScreenPoint(a);
-        var bOnScreen = camera.WorldToScreenPoint(b);
-        return aOnScreen - bOnScreen;
+		return GetComponent<IndieDevBehavior>().RunDirection;	
     }
 }

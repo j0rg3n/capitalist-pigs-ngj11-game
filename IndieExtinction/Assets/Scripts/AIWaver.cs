@@ -228,8 +228,8 @@ namespace Irrelevant.Assets.Scripts.AI
 
 		const int TrackLengthWeight = 1;
 		const int HasLastVisitedWeight = 1;
-		const int HasHouseWeight = 10;
-		const int IsTowardsSPWeight = 5;
+		const int HasHouseWeight = 8;
+		const int IsTowardsSPWeight = 11;
 
 		public Track ChooseTrack(int p1SPInd, int p2SPInd, int lastVisitedBlock)
 		{

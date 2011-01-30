@@ -70,7 +70,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
             System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
 
             GlobalObjects.GetGlobbalGameState().Pie -= 10;
-            SpawnIndieDevs(indieDevCount, location.houseTileInd);
+            SpawnIndieDevs(1, location.houseTileInd);
             if (indieDevCount == 0)
             {
                 isSetForDestruction = true;
