@@ -4,12 +4,7 @@ using System.Collections.Generic;
 
 public class SlideRotateBehavior : MonoBehaviour 
 {
-    public Texture2D slide1;
-    public Texture2D slide2;
-    public Texture2D slide3;
-    public Texture2D slide4;
-    public Texture2D slide5;
-    public Texture2D slide6;
+    public Texture2D[] slides;
 
     public Transform pivot;
 
@@ -18,13 +13,6 @@ public class SlideRotateBehavior : MonoBehaviour
 
 	public void Start()
     {
-        AddIfNotNull(slides, slide1);
-        AddIfNotNull(slides, slide2);
-        AddIfNotNull(slides, slide3);
-        AddIfNotNull(slides, slide4);
-        AddIfNotNull(slides, slide5);
-        AddIfNotNull(slides, slide6);
-
         pivotOffset = transform.position - pivot.transform.position;
         pivotRotation = transform.rotation;
         pivot.GetComponent<MeshRenderer>().enabled = false;
@@ -88,7 +76,7 @@ public class SlideRotateBehavior : MonoBehaviour
 
     private void SetSlideTexture(int index)
     {
-        Texture2D slide = index >= 0 && index < slides.Count ? slides[index] : null;
+        Texture2D slide = index >= 0 && index < slides.Length ? slides[index] : null;
         GetComponent<MeshRenderer>().material.mainTexture = slide;
         GetComponent<MeshRenderer>().enabled = slide != null;
     }
@@ -113,5 +101,4 @@ public class SlideRotateBehavior : MonoBehaviour
     private AnimationCurve zoomCurve;
     private float prevZoom = 0;
     private float prevSlideIndex = -1;
-    private readonly List<Texture2D> slides = new List<Texture2D>();
 }
