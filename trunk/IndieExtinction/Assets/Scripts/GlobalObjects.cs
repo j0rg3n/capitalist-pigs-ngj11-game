@@ -10,13 +10,18 @@ public class GlobalObjects
 
 	public static Camera GetMainCamera()
 	{
-		return GameObject.Find(MAIN_CAMERA).GetComponent<Camera>(); // GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
+		return GameObject.Find(MAIN_CAMERA).GetComponent<Camera>();
 	}
 
 	public static MeshFilter GetMapMesh()
 	{
-		return GameObject.Find(MAP).GetComponent<MeshFilter>(); // GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
+		return GameObject.Find(MAP).GetComponent<MeshFilter>();
 	}
+
+    public static PieChartGUIBehavior GetHealthPie()
+    {
+        return GameObject.Find(HEALTH_PIE).GetComponent<PieChartGUIBehavior>();
+    }
 
 	public static IndieDevBehavior[] GetIndieDevs()
 	{
@@ -46,7 +51,8 @@ public class GlobalObjects
     }
 
 	private const string MAIN_CAMERA = "Main Camera";
-	private const string MAP = "Map";
+    private const string MAP = "Map";
+    private const string HEALTH_PIE = "HealthPie";
 
     private static T FindObjectOfType<T>() where T : Object
     {
