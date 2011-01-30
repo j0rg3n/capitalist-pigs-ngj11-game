@@ -5,6 +5,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
 {
     public int score;
     public int kill = 10;
+    public float pie = 100;
 
     public AudioClip introClip;
     public AudioClip inGameClip;
@@ -23,6 +24,22 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public void demultiplyer(int badPie)
     {
         score *= badPie;
+    }
+
+    public float Pie
+    {
+        get { return pie; }
+        set 
+        {
+            float now = Time.time;
+            visualPieCurve = AnimationCurve.EaseInOut(now, VisualPie, now + .3f, value);
+            pie = value; 
+        }
+    }
+
+    public float VisualPie
+    {
+        get { return visualPieCurve != null ? visualPieCurve.Evaluate(Time.time) : pie; }
     }
 
     public int Score
@@ -76,7 +93,17 @@ public class GlobalGameStateBehavior : MonoBehaviour
 	
 	void Update () 
     {
-        if (!gameScene)
+        if (gameScene)
+        {
+            var healtPie = GlobalObjects.GetHealthPie();
+            healtPie.amount = VisualPie / 100.0f;
+
+            if (Random.Range(0, 25) == 1)
+            {
+                Pie -= 20;
+            }
+        }
+        else
         {
             float t = TimeElapsed;
 
@@ -114,6 +141,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     private bool gameScene;
     private AudioClip theAudioClip;
     private int prevSlideIndex = -1;
+    private AnimationCurve visualPieCurve;
 
     // Slide 0 is the pause before the first actual slide.
     private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };

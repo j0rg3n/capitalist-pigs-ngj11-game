@@ -27,7 +27,15 @@ public class MathUtil
     {
         var camera = GlobalObjects.GetMainCamera();
 
-        Bounds bounds = gameObject.GetComponent<MeshFilter>().mesh.bounds;
+        var meshFilter = gameObject.GetComponent<MeshFilter>();
+        if (meshFilter == null)
+        {
+            var screenPos = camera.WorldToScreenPoint(gameObject.transform.position);
+            screenBounds = new Rect(screenPos.x, screenPos.y, 0, 0);
+            return screenPos;
+        }
+
+        Bounds bounds = meshFilter.mesh.bounds;
 
         Vector2 screenBoundsMax = new Vector2(float.MinValue, float.MinValue);
         Vector2 screenBoundsMin = new Vector2(float.MaxValue, float.MaxValue);
