@@ -9,7 +9,7 @@ namespace Irrelevant.Assets.Scripts
 {
 	public class IndieHouseLocation
 	{
-		public const int MAX_DEVS_IN_INDIE_HOUSE = 20;
+		public const int MAX_DEVS_IN_INDIE_HOUSE = 25;
 		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 5;
 		public const float CURSE_DURATION = 2f;
 
@@ -23,6 +23,8 @@ namespace Irrelevant.Assets.Scripts
 
 		IndieStudioBehavior studio;
 		public int locationInd;
+
+		public Waver waver;
 
 		public bool IsFull()
 		{

@@ -110,6 +110,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					IndieHouseLocation location = new IndieHouseLocation();
 					location.houseTileInd = waver.BlockCoordsToIndex(i, j);
 					location.locationInd = GlobalObjects.indieHouseLocations.Count;
+					location.waver = new Waver();
+					location.waver.AI = this;
 					GlobalObjects.indieHouseLocations.Add(location);
 					++studiosCreated;
 
@@ -133,10 +135,16 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		}*/
 
 		System.Diagnostics.Debug.Assert(bFoundStartingPoint);
+		CalculateInitialRoutes(); // TODO:m call this somewhere else
 	}
 
-	void CalculateInitialRoutes() // TODO:m call
+	void CalculateInitialRoutes()
 	{
+		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
+		{
+			GlobalObjects.indieHouseLocations[h].waver.StartWave(GlobalObjects.indieHouseLocations[h].houseTileInd, levelMatrix);
+		}
+
 		Update();
 	}
 	
@@ -246,7 +254,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 							indieDev.aiDevGuy.waiting = true;
 							indieDev.aiDevGuy.waited += fElapsedSeconds;
 							waitingDevs.Add(indieDev);
-							if (waitingCount == IndieHouseLocation.MAX_DEVS_IN_INDIE_HOUSE)
+							if (waitingCount >= IndieHouseLocation.MAX_DEVS_IN_INDIE_HOUSE)
 							{
 								enough = true;
 							}
@@ -276,12 +284,13 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 			if (indieDev.aiDevGuy.waiting)
 			{
+				/*
 				if (indieDev.aiDevGuy.waited >= DevGuy.MAX_WAIT)
 				{
 					indieDev.aiDevGuy.waited = 0f;
 					indieDev.aiDevGuy.waiting = false;
 				}
-				else
+				else */
 				{
 					continue;
 				}
@@ -345,7 +354,18 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			while (j<devsToProcess.Count && devsToProcess[i].currentBlock == devsToProcess[j].currentBlock)
 				++j;
 
-			bool hasTracks = waver.StartWave(devsToProcess[i].currentBlock, levelMatrix);
+			Waver useWaver = waver;
+			bool usingDefaultWaver = true;
+			for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
+			{
+				if (GlobalObjects.indieHouseLocations[h].houseTileInd == devsToProcess[i].currentBlock)
+				{
+					useWaver = GlobalObjects.indieHouseLocations[h].waver;
+					usingDefaultWaver = false;
+					break;
+				}
+			}
+			bool hasTracks = usingDefaultWaver ? waver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : waver.HasTracks();
 			if (hasTracks)
 			{
 				for (int k = i; k < j; ++k)

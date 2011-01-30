@@ -144,6 +144,11 @@ namespace Irrelevant.Assets.Scripts.AI
 		}
 
 
+		public bool HasTracks()
+		{
+			return completeTracks.Count > 0;
+		}
+
 		// returns true if atleas one track exists
 		public bool StartWave(int start, int[,] map) // 0 - not passable, 1 - rotating, 2 - empty (passable))
 		{
