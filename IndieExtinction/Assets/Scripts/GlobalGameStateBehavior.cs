@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GlobalGameStateBehavior : MonoBehaviour
 {
-    public bool gameScene;
     public int score;
     public int kill = 10;
 
@@ -59,8 +58,15 @@ public class GlobalGameStateBehavior : MonoBehaviour
         }
     }
 
+    public bool IsGameScene
+    {
+        get { return gameScene; }
+    }
+
     void Start() 
     {
+        gameScene = GlobalObjects.GetSlideProjector() == null;
+
         score = 100;
 
         theAudioClip = gameScene ? inGameClip : introClip;
@@ -105,6 +111,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         }
     }
 
+    private bool gameScene;
     private AudioClip theAudioClip;
     private int prevSlideIndex = -1;
 

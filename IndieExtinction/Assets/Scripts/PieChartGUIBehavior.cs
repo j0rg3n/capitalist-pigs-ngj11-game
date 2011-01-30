@@ -14,7 +14,7 @@ public class PieChartGUIBehavior : MonoBehaviour
     {
         var wrappedAmount = amount - Mathf.Floor(amount);
 
-        Vector2 screenPos = GetBasePointWithAlignment();
+        Vector2 screenPos = MathUtil.GetBasePointWithAlignment(gameObject, alignment);
 
         // TODO: Find out why WorldToScreenPoint gets the Y 
         // coordinate inverted.
@@ -37,59 +37,6 @@ public class PieChartGUIBehavior : MonoBehaviour
             DrawRotatedTexture(clockRect, rightBackground, wrappedAmount);
             DrawRotatedTexture(clockRect, right, 0);
         }
-    }
-
-    private Vector2 GetBasePointWithAlignment()
-    {
-        var camera = GlobalObjects.GetMainCamera();
-
-        Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
-
-        Vector2 screenBoundsMax = new Vector2(float.MinValue, float.MinValue);
-        Vector2 screenBoundsMin = new Vector2(float.MaxValue, float.MaxValue);
-        foreach (Vector3 localBoundCorner in MathUtil.GetBoundsCorners(bounds))
-        {
-            var worldBoundCorner = transform.TransformPoint(localBoundCorner);
-            Vector2 screenBoundsCorner = camera.WorldToScreenPoint(worldBoundCorner);
-
-            screenBoundsMin = Vector2.Min(screenBoundsMin, screenBoundsCorner);
-            screenBoundsMax = Vector2.Max(screenBoundsMax, screenBoundsCorner);
-        }
-
-        Vector2 screenBoundsSize = new Vector2(screenBoundsMax.x - screenBoundsMin.x, screenBoundsMax.y - screenBoundsMin.y);
-
-        Vector2 basePointWithAlignment = screenBoundsSize;
-        // TODO: Again with the inverted Y! Why!?
-        basePointWithAlignment.Scale(new Vector2(alignment.x, 1 - alignment.y));
-        return screenBoundsMin + basePointWithAlignment;
-
-        /*
-        Vector2 inverseScreenBoundsSize = screenBoundsSize;
-        inverseScreenBoundsSize.x = inverseScreenBoundsSize.x != 0 ? 1 / inverseScreenBoundsSize.x : 1;
-        inverseScreenBoundsSize.y = inverseScreenBoundsSize.y != 0 ? 1 / inverseScreenBoundsSize.y : 1;
-
-        float closestDistance = float.MaxValue;
-        Vector2 closestCornerPoint = Vector2.zero;
-        foreach (Vector3 localBoundCorner in MathUtil.GetBoundsCorners(bounds))
-        {
-            var worldBoundCorner = transform.TransformPoint(localBoundCorner);
-            Vector2 screenBoundsCorner = camera.WorldToScreenPoint(worldBoundCorner);
-
-            // Scale to -1..1 range
-            Vector2 scaledScreenBoundsCorner = screenBoundsCorner - screenBoundsMin;
-            scaledScreenBoundsCorner.Scale(inverseScreenBoundsSize);
-
-            float distance = (scaledScreenBoundsCorner - alignment).magnitude;
-
-            if (closestDistance < distance)
-            {
-                closestDistance = distance;
-                closestCornerPoint = screenBoundsCorner;
-            }
-        }
-
-        return closestCornerPoint;
-        */
     }
 
     private static void DrawRotatedTexture(Rect clockRect, Texture2D texture, float amount)
