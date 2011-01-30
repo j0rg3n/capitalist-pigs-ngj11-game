@@ -9,7 +9,7 @@ public class SoftwareMouseCursor : MonoBehaviour
     public float Scale = 0.2f;
 
 
-    private Vector2 OnClickOffset =  new Vector2(8,6);
+    private Vector2 OnClickOffset =  new Vector2(-3,-8);
     private Vector2 CurOffset;
     public float offsetTime = 0.5f;
     private float times = 0.0f;
@@ -17,7 +17,7 @@ public class SoftwareMouseCursor : MonoBehaviour
     bool peaked = false;
     void Start()  
     {
-        Screen.showCursor = false;
+        //Screen.showCursor = false;
         cursorTex = texArray[0];
      }  
     
@@ -61,7 +61,7 @@ public class SoftwareMouseCursor : MonoBehaviour
          }
 
          Vector3 mousePos = Input.mousePosition;
-         Rect pos = new Rect(mousePos.x - (float)(0.88f * cursorTex.width * Scale) + CurOffset.x, (Screen.height - mousePos.y) - (int)(0.55f * Scale * cursorTex.height)+CurOffset.y, (int)(cursorTex.width * Scale), (int)(cursorTex.height * Scale));
+         Rect pos = new Rect(mousePos.x - (float)(0.22f * cursorTex.width * Scale) + CurOffset.x, (Screen.height - mousePos.y) - (int)(0.15f * Scale * cursorTex.height)+CurOffset.y, (int)(cursorTex.width * Scale), (int)(cursorTex.height * Scale));
          GUI.Label(pos, cursorTex);
      }
 }
