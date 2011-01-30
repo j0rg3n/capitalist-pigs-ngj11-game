@@ -8,10 +8,15 @@ public class GlobalObjects
 	public static List<IndieHouseLocation> indieHouseLocations = new List<IndieHouseLocation>();
 
 
-    public static Camera GetMainCamera()
-    {
-        return GameObject.Find(MAIN_CAMERA).GetComponent<Camera>(); // GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
-    }
+	public static Camera GetMainCamera()
+	{
+		return GameObject.Find(MAIN_CAMERA).GetComponent<Camera>(); // GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
+	}
+
+	public static MeshFilter GetMapMesh()
+	{
+		return GameObject.Find(MAP).GetComponent<MeshFilter>(); // GameObject.Find(ObjectNames.MAIN_CAMERA).GetComponent<Camera>();
+	}
 
 	public static IndieDevBehavior[] GetIndieDevs()
 	{
@@ -40,10 +45,11 @@ public class GlobalObjects
     {
     }
 
+	private const string MAIN_CAMERA = "Main Camera";
+	private const string MAP = "Map";
     private static T FindObjectOfType<T>() where T : Object
     {
         return (T)Object.FindObjectOfType(typeof(T));
     }
 
-    private const string MAIN_CAMERA = "Main Camera";
 }

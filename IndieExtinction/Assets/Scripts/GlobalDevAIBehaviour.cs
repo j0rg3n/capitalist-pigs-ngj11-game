@@ -9,8 +9,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public float BlockSize = 3f; // units width of a block
 	public int MapWidth = 60;
 	public int MapHeight = 40;
-	const float calmSpeed = 60f;
-	const float hasteSpeed = calmSpeed * 1.5f;
+	public float calmSpeed = 0.05f;
+	public float hasteSpeedMultiplier = 1.5f;
 
 	public int MapSize;
 	public float MapWidthUnits;
@@ -20,11 +20,15 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 	public Texture2D mapFieldTexture;
 	public Transform buildingPrefab;
+	public Transform startBuildingPrefab;
 
 	public Transform InstantiateBuilding()
 	{
 		return (Transform)Instantiate(buildingPrefab);
 	}
+
+
+	public Transform debugPrefab;
 
 	// TODO:3 consider keeping this in a single-dimention array called map
 	int[,] levelMatrix; // 0 - not passable, 1 - passable
@@ -40,7 +44,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		public int houseTileInd;
 		public int houseInd;
 	}
-	public List<HouseIndices> destHouseInds;
+	public List<HouseIndices> destHouseInds = new List<HouseIndices>();
 
 	Waver waver = new Waver();
 
@@ -54,18 +58,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	
 
 	public int studiosCreated = 0;
-
-	public Color debugCol;
-	public Color debugCol2;
-	public Color debugCol3;
-	public Color debugCol4;
-
-	public float debugFloat1;
-	public float debugFloat2;
-	public float debugFloat3;
-	public int debugInt1 = -1;
-	public int debugInt2 = -1;
-	public int debugInt3 = -1;
 
 	// Use this for initialization
 	void Start () 
@@ -86,14 +78,14 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		GlobalObjects.indieHouseLocations = new List<IndieHouseLocation>();
         for (int i = 0; i < MapWidth; ++i)
         {
-            for (int j = 0; j < MapHeight; ++j)
+            for (int jj = 0; jj < MapHeight; ++jj)
             {
-				Color pixel = mapFieldTexture.GetPixel(i, j);
+				Color pixel = mapFieldTexture.GetPixel(i, jj);
+				int j = MapHeight - jj - 1;
 
 				if (pixel == colorPass || pixel == colorIndieHouse || pixel == colorStartPoint)
 				{
 					levelMatrix[i, j] = 1;
-					debugCol = pixel;
 				}
 				else
 				{
@@ -102,32 +94,48 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 				if (pixel == colorStartPoint)
 				{
-					debugCol2 = pixel;
 					System.Diagnostics.Debug.Assert(!bFoundStartingPoint);
 					bFoundStartingPoint = true;
 					startSpawnPointInd = waver.BlockCoordsToIndex(i, j);
-					debugInt2 = startSpawnPointInd;
+
+					Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
+					Transform startBuilding = (Transform)Instantiate(startBuildingPrefab);
+
+					var offset = startBuilding.GetComponent<MeshFilter>().mesh.bounds.extents;
+					offset.Scale(Vector3.up);
+					startBuilding.position = baseWorldPos + offset;
 				}
 				if (pixel == colorIndieHouse)
 				{
-					debugCol3 = pixel;
 					IndieHouseLocation location = new IndieHouseLocation();
 					location.houseTileInd = waver.BlockCoordsToIndex(i, j);
-					if (debugInt1 < 0)
-					{
-						debugInt1 = location.houseTileInd;
-					}
+					location.locationInd = GlobalObjects.indieHouseLocations.Count;
 					GlobalObjects.indieHouseLocations.Add(location);
 					++studiosCreated;
 
 					location.baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
 
                     // TODO:m remove
-                    location.waitingCount = 5;
-                    location.CreateHouse();
+                    //location.waitingCount = 5;
+                    //location.CreateHouse();
                 }
 			}
         }
+
+		/*
+		for (int i = 25; i < 28; ++i)
+		{
+			for (int j = 1; j < 4; ++j)
+			{
+				if (levelMatrix[i, MapHeight - j - 1] > 0)
+				{
+					Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
+					Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
+					newDev.position = baseWorldPos;
+				}
+			}
+		}*/
+
 		System.Diagnostics.Debug.Assert(bFoundStartingPoint);
 	}
 
@@ -136,29 +144,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		Update();
 	}
 	
-	// Update is called once per frame
-	void Update () 
-	{
-		return;
-
-		fElapsedSeconds = (float)Time.deltaTime; // seconds
-        destHouseInds.Clear();
-
-		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
-        {
-			if (!GlobalObjects.indieHouseLocations[h].isPresent || !GlobalObjects.indieHouseLocations[h].IsFull())
-            {
-				destHouseInds.Add(new HouseIndices(GlobalObjects.indieHouseLocations[h].houseTileInd, h));
-            }
-        }
-
-		foreach (IndieDevBehavior indieDev in GlobalObjects.GetIndieDevs())
-		{
-			UpdateDevGuy(indieDev.aiDevGuy);
-		}
-	}
-
-
 	// ****************************************************************
 	// *********** Level Matrix stuff *********************************
 	// ****************************************************************
@@ -216,79 +201,153 @@ public class GlobalDevAIBehaviour : MonoBehaviour
     // *********** DevGuy updating *************************************
     // ****************************************************************
 
+	class DevToProcess
+	{
+		public DevGuy devGuy;
+		public bool hasTrack;
+		public int currentBlock;
+		public int p1SPInd;
+		public int p2SPInd;
+	}
+
+	static int CompareDevsToProcess(DevToProcess a, DevToProcess b)
+	{
+		int ai = a.hasTrack ? -1 : a.currentBlock;
+		int bi = b.hasTrack ? -1 : b.currentBlock;
+		return bi - ai;
+	}
+
+	System.Comparison<DevToProcess> DevToProcessComparison = new System.Comparison<DevToProcess>(CompareDevsToProcess);
+
+	// Update is called once per frame
+	void Update()
+	{
+		fElapsedSeconds = Time.deltaTime; // seconds
+		destHouseInds.Clear();
+
+		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
+		{
+			if (!GlobalObjects.indieHouseLocations[h].isPresent || !GlobalObjects.indieHouseLocations[h].IsFull())
+			{
+				destHouseInds.Add(new HouseIndices(GlobalObjects.indieHouseLocations[h].houseTileInd, h));
+			}
+		}
+
+		IndieDevBehavior[] indieDevs = GlobalObjects.GetIndieDevs();
+		List<DevToProcess> devsToProcess = new List<DevToProcess>();
+
+		foreach (IndieDevBehavior indieDev in indieDevs)
+		{
+			if (!indieDev.alive)
+				continue;
+
+			DevGuy devGuy = indieDev.aiDevGuy;
+			for (int h = 0; h < destHouseInds.Count; h++)
+			{
+				bool bSkip = CheckImmediateProximity(devGuy, destHouseInds[h]);
+				if (bSkip)
+					continue;
+			}
+			
+			// update the track if it needs to
+			if (devGuy.currentTrack != null && devGuy.currentTrack.Length() == 0)
+				devGuy.currentTrack = null;
+
+			int p1SPInd = startSpawnPointInd;
+			// TODO:m optimize by not doing stuff for the second spawn point if too slow
+			int p2SPInd = devGuy.lastHousePointInd >= 0 ? devGuy.lastHousePointInd : startSpawnPointInd;
+
+			if (devGuy.currentTrack != null)
+			{
+				System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p1SPInd));
+				System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p2SPInd));
+
+				if (waver.WaverIsSPIsTooClose(p1SPInd, p2SPInd, devGuy.currentTrack.PeekNext()))
+					devGuy.currentTrack = null;
+			}
+
+			// probably not necessary - was needed since tiles could rotate ad block the path
+			//if (devGuy.currentTrack != null)
+			//{
+			//    int icur, jcur;
+			//    Waver.BlockIndexToCoords(devGuy.currentTrack.PeekNext(), out icur, out jcur);
+			//    if (!Waver.PassableBlock(levelMatrix, devGuy.currentTrack.PeekNext()))
+			//        devGuy.currentTrack = null;
+			//}
+
+			DevToProcess d = new DevToProcess();
+			d.devGuy = devGuy;
+			d.hasTrack = devGuy.currentTrack != null;
+			//UnityEngine.Debug.Log(string.Format("pos {0} {1}", devGuy.Position.x, devGuy.Position.y));
+			d.currentBlock = waver.PositionToBlockIndex(devGuy.Position);
+			UnityEngine.Debug.Log(string.Format("current block ind {0}", d.currentBlock));
+			d.p1SPInd = p1SPInd;
+			d.p2SPInd = p2SPInd;
+			
+			devsToProcess.Add(d);
+		}
+		devsToProcess.Sort(DevToProcessComparison);
+		int i=0;
+		while (i<devsToProcess.Count && devsToProcess[i].hasTrack)
+		{
+			++i;
+			continue;
+		}
+		while (i<devsToProcess.Count)
+		{
+			int j=i+1;
+			while (j<devsToProcess.Count && devsToProcess[i].currentBlock == devsToProcess[j].currentBlock)
+				++j;
+
+			bool hasTracks = waver.StartWave(devsToProcess[i].currentBlock, levelMatrix);
+			if (hasTracks)
+			{
+				for (int k = i; k < j; ++k)
+				{
+					devsToProcess[k].devGuy.currentTrack = waver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
+					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
+					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
+					UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
+					/*
+					for (int ii = 0; ii < devsToProcess[k].devGuy.currentTrack.track.Count; ++ii)
+					{
+						int ind1, ind2;
+						waver.BlockIndexToCoords(devsToProcess[k].devGuy.currentTrack.track[ii], out ind1, out ind2);
+						Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), ind1 + .5f, ind2 + .5f, MapWidth, MapHeight);
+						Transform newDev = (Transform)Instantiate(debugPrefab, baseWorldPos, Quaternion.identity);
+						newDev.position = baseWorldPos;
+					}
+					UnityEngine.Debug.Log(string.Format("{0}", devsToProcess[k].devGuy.currentTrack.ToSrting()));
+					 */
+				}
+			}
+			i=j;
+		}
+
+		foreach (DevToProcess d in devsToProcess)
+		{
+			if (d.devGuy.currentTrack == null)
+				continue;
+			// do smooth movement
+			int nextBlockInd = d.devGuy.currentTrack.PeekNext();
+			UnityEngine.Debug.Log(string.Format("next block ind {0}", nextBlockInd));
+			//Debug.Print(String.Format("{0}, cur {1}, next {2}, track: {3}", devGuy.type, currentBlock, nextBlockInd, devGuy.currentTrack.ToSrting()));
+			bool areWeThereYet = nextBlockInd != d.currentBlock ? MoveTowards(d.devGuy, d.currentBlock, nextBlockInd, (d.devGuy.currentTrack.makeHaste ? hasteSpeedMultiplier * calmSpeed : calmSpeed)) : true;
+			if (areWeThereYet)
+			{
+				if (nextBlockInd != d.currentBlock)
+					d.devGuy.lastVisitedBlockIndex = d.currentBlock;
+				d.currentBlock = d.devGuy.currentTrack.PopNext();
+			}
+		}
+	}
+
+
+	/*
 	bool UpdateDevGuy(DevGuy devGuy)
     {
         //int i, j;
         //SetMatrixValue(devGuy.Position, -1, out i, out j); // TODO:m what's this for?
-
-		for (int h = 0; h < destHouseInds.Count; h++)
-        {
-            bool bSkip = CheckImmediateProximity(devGuy, destHouseInds[h]);
-            if (bSkip)
-                return bSkip;
-        }
-
-
-        // update the track if it needs to
-        if (devGuy.currentTrack != null && devGuy.currentTrack.Length() == 0)
-            devGuy.currentTrack = null;
-
-        if (devGuy.updateHousePointInd)
-        {
-            devGuy.updateHousePointInd = false;
-            devGuy.lastHousePointInd = -1;
-            if (devGuy.hasHousePoint)
-            {
-                devGuy.lastHousePointInd = waver.PositionToBlockIndex(devGuy.lastHouseCoords);
-            }
-        }
-
-        int p1SPInd = startSpawnPointInd;
-        // TODO:m optimize by not doing stuff for the second spawn point if too slow
-        int p2SPInd = devGuy.lastHousePointInd >= 0 ? devGuy.lastHousePointInd : startSpawnPointInd;
-
-        if (devGuy.currentTrack != null)
-        {
-			System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p1SPInd));
-			System.Diagnostics.Debug.Assert(!devGuy.currentTrack.HasBlock(p2SPInd));
-
-            if (waver.WaverIsSPIsTooClose(p1SPInd, p2SPInd, devGuy.currentTrack.PeekNext()))
-                devGuy.currentTrack = null;
-        }
-
-        // probably not necessary - was needed since tiles could rotate ad block the path
-        //if (devGuy.currentTrack != null)
-        //{
-        //    int icur, jcur;
-        //    Waver.BlockIndexToCoords(devGuy.currentTrack.PeekNext(), out icur, out jcur);
-        //    if (!Waver.PassableBlock(levelMatrix, devGuy.currentTrack.PeekNext()))
-        //        devGuy.currentTrack = null;
-        //}
-
-        if (devGuy.noTracksDuring != 0) // TODO:m what's this for?
-            return false;
-
-        int currentBlock = waver.PositionToBlockIndex(devGuy.Position);
-        if (devGuy.currentTrack == null)
-        {
-            bool hasTracks = waver.StartWave(currentBlock, levelMatrix);
-            if (hasTracks)
-            {
-                devGuy.currentTrack = waver.ChooseTrack(p1SPInd, p2SPInd, devGuy.lastVisitedBlockIndex);
-				System.Diagnostics.Debug.Assert(devGuy.currentTrack == null || !devGuy.currentTrack.HasBlock(p1SPInd));
-				System.Diagnostics.Debug.Assert(devGuy.currentTrack == null || !devGuy.currentTrack.HasBlock(p2SPInd));
-            }
-            else
-            {
-                devGuy.currentTrack = null;
-                ++devGuy.noTracksDuring;
-                if (devGuy.noTracksDuring == DevGuy.NoTracksDelay)
-                {
-                    // TODO:3 test this
-                    devGuy.noTracksDuring = 0;
-                }
-            }
-        }
 
         if (devGuy.currentTrack == null)
             return false; // don't skip
@@ -296,7 +355,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
         // do smooth movement
         int nextBlockInd = devGuy.currentTrack.PeekNext();
         //Debug.Print(String.Format("{0}, cur {1}, next {2}, track: {3}", devGuy.type, currentBlock, nextBlockInd, devGuy.currentTrack.ToSrting()));
-        bool areWeThereYet = nextBlockInd != currentBlock ? MoveTowards(devGuy, currentBlock, nextBlockInd, (devGuy.currentTrack.makeHaste ? hasteSpeed : calmSpeed)) : true;
+		bool areWeThereYet = nextBlockInd != d.currentBlock ? MoveTowards(devGuy, currentBlock, nextBlockInd, (devGuy.currentTrack.makeHaste ? hasteSpeed : calmSpeed)) : true;
         if (areWeThereYet)
         {
             if (nextBlockInd != currentBlock)
@@ -305,7 +364,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
         }
 
         return false; // don't skip
-    }
+    }*/
 
 	public Vector2 ValidatePosition(Vector2 Position)
 	{

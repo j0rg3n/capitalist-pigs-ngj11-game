@@ -6,24 +6,28 @@ public abstract class StudioBehaviorBase : MonoBehaviour
     public Transform indieDevMalePrefab;
     public AudioClip Sound_explotion;
 
-    protected void SpawnIndieDevs(int count)
+    protected void SpawnIndieDevs(int count, int indieStudioAiTileInd)
     {
-        var studioBounds = GetComponent<MeshFilter>().mesh.bounds;
+		var worldSpawnPos = transform.position;
+        //var studioBounds = GetComponent<MeshFilter>().mesh.bounds;
 
         for (int i = 0; i < count; ++i)
         {
-            var localSpawnPos = RandomUtil.GetPointInBounds(studioBounds);
-            var worldSpawnPos = transform.TransformPoint(localSpawnPos);
+            //var localSpawnPos = RandomUtil.GetPointInBounds(studioBounds);
+            //var worldSpawnPos = transform.TransformPoint(localSpawnPos);
             //Transform indieDvInstance = (Transform)Instantiate(indieDevPrefab, worldSpawnPos, Quaternion.identity);
+			Transform newDev;
             if (Random.value > 0.35)
             {
-                Instantiate(indieDevMalePrefab, worldSpawnPos, Quaternion.identity);
+				newDev = (Transform)Instantiate(indieDevMalePrefab, worldSpawnPos, Quaternion.identity);
             }
             else
             {
-                Instantiate(indieDevFemalePrefab, worldSpawnPos, Quaternion.identity);
+				newDev = (Transform)Instantiate(indieDevFemalePrefab, worldSpawnPos, Quaternion.identity);
             }
-        }
+			IndieDevBehavior devGuy = newDev.GetComponent<IndieDevBehavior>();
+			devGuy.aiDevGuy.SetLastHouse(indieStudioAiTileInd);
+		}
     }
 
 }

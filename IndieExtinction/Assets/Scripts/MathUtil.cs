@@ -25,7 +25,19 @@ public class MathUtil
         return transform.TransformPoint(localPoint);
     }
 
-    /// <summary>
+	public static Vector3 GetWorldPositionFromLocal(MeshFilter planeMeshFilter, Vector3 localPoint)
+	{
+		var transform = planeMeshFilter.GetComponent<Transform>();
+		return transform.TransformPoint(localPoint);
+	}
+
+	public static Vector3 GetLocalPositionFromWorld(MeshFilter planeMeshFilter, Vector3 worldPoint)
+	{
+		var transform = planeMeshFilter.GetComponent<Transform>();
+		return transform.InverseTransformPoint(worldPoint);
+	}
+
+	/// <summary>
     /// This assumes that the plane has <c>Vector3D.up</c> as its up axis.
     /// Gets the center of the grid cell.
     /// </summary>
@@ -34,7 +46,7 @@ public class MathUtil
         var localBounds = planeMeshFilter.mesh.bounds;
         var localPoint = new Vector3(localBounds.min.x + (localBounds.max.x - localBounds.min.x) * (width - x) / width,
             0f,
-            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (height - y) / height);
+            localBounds.min.z + (localBounds.max.z - localBounds.min.z) * (y) / height);
         return localPoint;
     }
 

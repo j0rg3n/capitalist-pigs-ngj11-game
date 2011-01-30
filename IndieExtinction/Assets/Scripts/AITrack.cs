@@ -9,7 +9,7 @@ namespace Irrelevant.Assets.Scripts.AI
 
 		public const int MAX_LENGTH = 5 + 1; // 1 for the starting tile
 
-		List<int> track = new List<int>(); // furthest blocks come last
+		public List<int> track = new List<int>(); // furthest blocks come last
 		public int grade = 0;
 		public bool makeHaste = false;
 
@@ -18,8 +18,9 @@ namespace Irrelevant.Assets.Scripts.AI
 			this.waver = waver;
 		}
 
-		public Track(int startBlock)
+		public Track(int startBlock, Waver waver)
 		{
+			this.waver = waver;
 			track.Add(startBlock);
 		}
 
@@ -33,6 +34,7 @@ namespace Irrelevant.Assets.Scripts.AI
 			Track extendedTrack = new Track(waver);
 			extendedTrack.track.AddRange(track);
 			extendedTrack.track.Add(newInd);
+			extendedTrack.waver = waver;
 			return extendedTrack;
 		}
 
@@ -73,6 +75,7 @@ namespace Irrelevant.Assets.Scripts.AI
 			int x, y;
 			waver.BlockIndexToCoords(block, out x, out y);
 			return String.Format("{0}({1},{2})", block, x, y);
+			//return String.Format("{0}", block);
 		}
 
 		public string ToSrting()

@@ -20,6 +20,7 @@ namespace Irrelevant.Assets.Scripts
 		List<DevGuy> waitingDevs = new List<DevGuy>();
 
 		IndieStudioBehavior studio;
+		public int locationInd;
 
 		public bool IsFull()
 		{
@@ -47,7 +48,7 @@ namespace Irrelevant.Assets.Scripts
 		public void AddDev(DevGuy devGuy)
 		{
 			studio.indieDevCount++;
-			// TODO:m destroy the dev
+			IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
 		}
 
 		public void CreateHouse()
@@ -67,8 +68,11 @@ namespace Irrelevant.Assets.Scripts
 			studio.indieDevCount = waitingCount;
 			studio.devTimeSeconds = 40 / studio.indieDevCount;
 			waitingCount = 0;
-			
-			// TODO:m destroy the devs
+
+			foreach (DevGuy devGuy in waitingDevs)
+			{
+				IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
+			}
 			waitingDevs.Clear();
 		}
 
