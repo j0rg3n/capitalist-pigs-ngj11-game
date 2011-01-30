@@ -114,10 +114,6 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					++studiosCreated;
 
 					location.baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
-
-                    // TODO:m remove
-                    //location.waitingCount = 5;
-                    //location.CreateHouse();
                 }
 			}
         }
@@ -292,7 +288,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			d.hasTrack = devGuy.currentTrack != null;
 			//UnityEngine.Debug.Log(string.Format("pos {0} {1}", devGuy.Position.x, devGuy.Position.y));
 			d.currentBlock = currentBlock;
-			UnityEngine.Debug.Log(string.Format("current block ind {0}", d.currentBlock));
+			//UnityEngine.Debug.Log(string.Format("current block ind {0}", d.currentBlock));
 			d.p1SPInd = p1SPInd;
 			d.p2SPInd = p2SPInd;
 			
@@ -319,7 +315,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					devsToProcess[k].devGuy.currentTrack = waver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
-					UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
+					//UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
 					/*
 					for (int ii = 0; ii < devsToProcess[k].devGuy.currentTrack.track.Count; ++ii)
 					{
@@ -342,7 +338,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 				continue;
 			// do smooth movement
 			int nextBlockInd = d.devGuy.currentTrack.PeekNext();
-			UnityEngine.Debug.Log(string.Format("next block ind {0}", nextBlockInd));
+			//UnityEngine.Debug.Log(string.Format("next block ind {0}", nextBlockInd));
 			//Debug.Print(String.Format("{0}, cur {1}, next {2}, track: {3}", devGuy.type, currentBlock, nextBlockInd, devGuy.currentTrack.ToSrting()));
 			bool areWeThereYet = nextBlockInd != d.currentBlock ? MoveTowards(d.devGuy, d.currentBlock, nextBlockInd, (d.devGuy.currentTrack.makeHaste ? hasteSpeedMultiplier * calmSpeed : calmSpeed)) : true;
 			if (areWeThereYet)
