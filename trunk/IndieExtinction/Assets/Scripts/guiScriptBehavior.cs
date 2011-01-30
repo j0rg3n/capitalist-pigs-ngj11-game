@@ -11,6 +11,10 @@ public class guiScriptBehavior : MonoBehaviour
     public bool alertFlashing;
     public Texture buttonTexture;
     public Font ft;
+    public GUIStyle GameOverStyle;
+    public Font GameOverFont;
+    public Font StatsFont;
+    
 
     void OnGUI()
     {
@@ -22,7 +26,7 @@ public class guiScriptBehavior : MonoBehaviour
         GUI.skin.font = ft;
         
         var globalgamestate = (GlobalGameStateBehavior)Object.FindObjectOfType(typeof(GlobalGameStateBehavior));
-
+        
         var timeRemaining = globalgamestate.TimeRemaining;
         minutes = ((int)timeRemaining / 60);
         seconds = ((int)timeRemaining % 60);
@@ -42,6 +46,12 @@ public class guiScriptBehavior : MonoBehaviour
         if (alert != null && (!alertFlashing || ((int)(Time.time * 3) & 1) == 0))
         {
             GUI.Label(new Rect((Screen.width * 0.54f), 5, 200, 200), alert);
+        }
+
+        if (globalgamestate.GameOver == true)
+        {
+            GUI.skin.font = GameOverFont;
+            GUI.Label(new Rect(Screen.width/4, Screen.height/4, 500, 100), "GAME OVER");
         }
     }
 

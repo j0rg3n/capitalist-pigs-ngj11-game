@@ -18,20 +18,32 @@ public class GlobalPickerBehavior : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (pointHits != null && pointHits.Length > 0)
+        var globalGameState = GetComponent<GlobalGameStateBehavior>();
+        if (globalGameState.GameOver)
         {
-            for (int i = 0; i < pointHits.Length; ++i)
+            if (mouseClick && globalGameState.SecondsSinceGameOver > 3.5f)
             {
-                IndexedHit hitInfo = new IndexedHit() { index = i, hit = pointHits[i] };
-                if (mouseDown)
+                globalGameState.LoadIntroLevel();
+                return; 
+            }
+        }
+        else
+        {
+            if (pointHits != null && pointHits.Length > 0)
+            {
+                for (int i = 0; i < pointHits.Length; ++i)
                 {
-                    hitInfo.hit.transform.gameObject.SendMessage("OnMouseDown", hitInfo, SendMessageOptions.DontRequireReceiver);
-                }
+                    IndexedHit hitInfo = new IndexedHit() { index = i, hit = pointHits[i] };
+                    if (mouseDown)
+                    {
+                        hitInfo.hit.transform.gameObject.SendMessage("OnMouseDown", hitInfo, SendMessageOptions.DontRequireReceiver);
+                    }
 
-                if (mouseClick)
-                {
-                    hitInfo.hit.transform.gameObject.SendMessage("OnMouseClicked", hitInfo, SendMessageOptions.DontRequireReceiver);
-                    //print(hitInfo.hit.transform.name + " clicked at " + hitInfo.hit.point);
+                    if (mouseClick)
+                    {
+                        hitInfo.hit.transform.gameObject.SendMessage("OnMouseClicked", hitInfo, SendMessageOptions.DontRequireReceiver);
+                        //print(hitInfo.hit.transform.name + " clicked at " + hitInfo.hit.point);
+                    }
                 }
             }
         }

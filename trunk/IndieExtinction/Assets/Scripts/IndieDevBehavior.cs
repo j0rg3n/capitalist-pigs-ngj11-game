@@ -61,8 +61,9 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().Frames = 1;
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
-        //transform.collider.active = false;
 
+        // Move to no-raycast zone.
+        gameObject.layer = 2;
 
         if (GlobalObjects.GetGlobbalGameState().houseCount == 0)
         {
@@ -73,7 +74,6 @@ public class IndieDevBehavior : BillboardBehavior
         {
             GlobalObjects.GetGlobbalGameState().addkillscore();
         }
-
 
         Vector3 offset;
         if (runDirection.x > 0)
