@@ -20,19 +20,29 @@ public class GlobalObjects
 
 	public static GlobalDevAIBehaviour GetDevAIBehaviour()
 	{
-		return (GlobalDevAIBehaviour)Object.FindObjectOfType(typeof(GlobalDevAIBehaviour));
+		return FindObjectOfType<GlobalDevAIBehaviour>();
 	}
 
 	// Marks the class as 'static'. 
     public static GlobalGameStateBehavior GetGlobbalGameState()
     {
-        return(GlobalGameStateBehavior)Object.FindObjectOfType(typeof(GlobalGameStateBehavior));
+        return FindObjectOfType<GlobalGameStateBehavior>();
+    }
+
+    public static SlideRotateBehavior GetSlideProjector()
+    {
+        return FindObjectOfType<SlideRotateBehavior>();
     }
 
     // Marks the class as 'static'. 
     // Mono doesn't allow the 'static' modifier on classes.
     private GlobalObjects()
     {
+    }
+
+    private static T FindObjectOfType<T>() where T : Object
+    {
+        return (T)Object.FindObjectOfType(typeof(T));
     }
 
     private const string MAIN_CAMERA = "Main Camera";

@@ -10,6 +10,11 @@ public class guiScriptBehavior : MonoBehaviour
 
     void OnGUI()
     {
+        if (!GetComponent<GlobalGameStateBehavior>().gameScene)
+        {
+            return;
+        }
+
         var globalgamestate = (GlobalGameStateBehavior)Object.FindObjectOfType(typeof(GlobalGameStateBehavior));
 
         var timeRemaining = globalgamestate.TimeRemaining;
