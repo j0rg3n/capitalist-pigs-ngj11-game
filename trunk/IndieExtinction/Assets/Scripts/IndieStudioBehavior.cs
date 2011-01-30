@@ -16,8 +16,13 @@ public class IndieStudioBehavior : StudioBehaviorBase
 	
 	void Update () 
     {
-        float elapsed = Time.time - startTime;
-        
+        var basePosition = MathUtil.GetBasePointWithAlignment(gameObject, new Vector2(.5f, 0));
+        var label = transform.GetChild(0).GetComponent<GUIText>();
+        label.text = string.Format("0x{0:X2}", indieDevCount);
+        label.transform.position = new Vector2(basePosition.x / Screen.width,
+            basePosition.y / Screen.height);
+
+        float elapsed = Time.time - startTime;        
         if (elapsed > devTimeSeconds)
         {
 			System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);

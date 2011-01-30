@@ -17,6 +17,66 @@ public class MathUtil
         }
     }
 
+    public static Vector2 GetBasePointWithAlignment(GameObject gameObject, Vector2 alignment)
+    {
+        Rect dummy;
+        return GetBasePointWithAlignment(gameObject, alignment, out dummy);
+    }
+
+    public static Vector2 GetBasePointWithAlignment(GameObject gameObject, Vector2 alignment, out Rect screenBounds)
+    {
+        var camera = GlobalObjects.GetMainCamera();
+
+        Bounds bounds = gameObject.GetComponent<MeshFilter>().mesh.bounds;
+
+        Vector2 screenBoundsMax = new Vector2(float.MinValue, float.MinValue);
+        Vector2 screenBoundsMin = new Vector2(float.MaxValue, float.MaxValue);
+        foreach (Vector3 localBoundCorner in MathUtil.GetBoundsCorners(bounds))
+        {
+            var worldBoundCorner = gameObject.transform.TransformPoint(localBoundCorner);
+            Vector2 screenBoundsCorner = camera.WorldToScreenPoint(worldBoundCorner);
+
+            screenBoundsMin = Vector2.Min(screenBoundsMin, screenBoundsCorner);
+            screenBoundsMax = Vector2.Max(screenBoundsMax, screenBoundsCorner);
+        }
+
+        Vector2 screenBoundsSize = new Vector2(screenBoundsMax.x - screenBoundsMin.x, screenBoundsMax.y - screenBoundsMin.y);
+        screenBounds = new Rect(screenBoundsMin.x, screenBoundsMin.y, screenBoundsSize.x, screenBoundsSize.y);
+
+        Vector2 basePointWithAlignment = screenBoundsSize;
+        // TODO: Again with the inverted Y! Why!?
+        basePointWithAlignment.Scale(new Vector2(alignment.x, 1 - alignment.y));
+        return screenBoundsMin + basePointWithAlignment;
+
+        /*
+        Vector2 inverseScreenBoundsSize = screenBoundsSize;
+        inverseScreenBoundsSize.x = inverseScreenBoundsSize.x != 0 ? 1 / inverseScreenBoundsSize.x : 1;
+        inverseScreenBoundsSize.y = inverseScreenBoundsSize.y != 0 ? 1 / inverseScreenBoundsSize.y : 1;
+
+        float closestDistance = float.MaxValue;
+        Vector2 closestCornerPoint = Vector2.zero;
+        foreach (Vector3 localBoundCorner in MathUtil.GetBoundsCorners(bounds))
+        {
+            var worldBoundCorner = transform.TransformPoint(localBoundCorner);
+            Vector2 screenBoundsCorner = camera.WorldToScreenPoint(worldBoundCorner);
+
+            // Scale to -1..1 range
+            Vector2 scaledScreenBoundsCorner = screenBoundsCorner - screenBoundsMin;
+            scaledScreenBoundsCorner.Scale(inverseScreenBoundsSize);
+
+            float distance = (scaledScreenBoundsCorner - alignment).magnitude;
+
+            if (closestDistance < distance)
+            {
+                closestDistance = distance;
+                closestCornerPoint = screenBoundsCorner;
+            }
+        }
+
+        return closestCornerPoint;
+        */
+    }
+
     public static Vector3 GetWorldPositionFromGridCoordinate(MeshFilter planeMeshFilter, float x, float y, int width, int height)
     {
         var localPoint = GetLocalPositionFromGridCoordinate(planeMeshFilter, x, y, width, height);
