@@ -11,6 +11,10 @@ public class IndieDevBehavior : BillboardBehavior
     public Material run;
     public Transform Blood;
     public bool alive;
+    public float fadetime = 5;
+    public float times;
+
+    private Color alfa;
     
     public Vector3 RunDirection
     {
@@ -26,6 +30,7 @@ public class IndieDevBehavior : BillboardBehavior
 	public override void Start () 
     {
         base.Start();
+        times = 0.0f;
         GetComponent<SpriteAnimator>().SetMaterial(run);
         alive = true;
         float angle = Random.Range(0f, 360f);
@@ -43,6 +48,7 @@ public class IndieDevBehavior : BillboardBehavior
         GetComponent<SpriteAnimator>().Frames = 1;
         GetComponent<SpriteAnimator>().SetMaterial(Death);
         alive = false;
+        //transform.collider.active = false;
         GlobalObjects.GetGlobbalGameState().addkillscore();
         if (runDirection.x > 0)
             Instantiate(Blood, transform.localPosition + new Vector3(0.7f, -0.7f, 0), transform.rotation);
@@ -67,12 +73,21 @@ public class IndieDevBehavior : BillboardBehavior
 	public override void Update () 
     {
         if (alive)
-		{
-			transform.position = GetAIWorldTransform();
+        {
+            transform.position = GetAIWorldTransform();
             //var pos = transform.position;
             //pos += runDirection * Time.deltaTime;
             //transform.position = pos;
-		}
+        }
+        else
+        {
+            times += Time.deltaTime;
+            alfa = transform.renderer.material.color;
+            alfa.a -= alfa.a * ( (times * 0.05f)/ fadetime);
+            transform.renderer.material.color = alfa;
+            if (times > fadetime)
+                Destroy(gameObject);
+        }
 
         base.Update();
 	}
