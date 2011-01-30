@@ -8,7 +8,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public int kill = 10;
     public float pie = 100;
     public float instanceScale = 2;
-    public int houseCount = 0;
+    public int houseCount;
 
     public AudioClip introClip;
     public AudioClip inGameClip;
@@ -121,7 +121,6 @@ public class GlobalGameStateBehavior : MonoBehaviour
     {
         if (gameScene)
         {
-            int houseCount = 0;
            houseCount = 0;
             foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
             {

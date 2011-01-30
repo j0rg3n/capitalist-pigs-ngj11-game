@@ -58,7 +58,7 @@ public class IndieDevBehavior : BillboardBehavior
             GlobalObjects.GetGlobbalGameState().addkillscore();
             GlobalObjects.GetGlobbalGameState().addkillscore();
         }
-        else
+        else if (GlobalObjects.GetGlobbalGameState().houseCount > 0)
         {
             GlobalObjects.GetGlobbalGameState().addkillscore();
         }
