@@ -7,6 +7,10 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public int score;
     public int kill = 10;
 
+    public AudioClip introClip;
+    public AudioClip inGameClip;
+    public Object nextScene;
+
     public void addkillscore()
     {
         score += kill;
@@ -32,26 +36,45 @@ public class GlobalGameStateBehavior : MonoBehaviour
         get
         {
             var themeAudioSource = GetComponent<AudioSource>();
-            return themeAudioSource.clip.length - themeAudioSource.time;
+            if (!themeAudioSource.isPlaying)
+            {
+                return 0;
+            }
+
+            return (theAudioClip.samples - themeAudioSource.timeSamples) / theAudioClip.frequency;
         }
     }
 
-	void Start () 
+    public float TimeElapsed
     {
-        startTime = Time.time;
+        get
+        {
+            var themeAudioSource = GetComponent<AudioSource>();
+            if (!themeAudioSource.isPlaying)
+            {
+                return theAudioClip.samples / theAudioClip.frequency;
+            }
 
+            return themeAudioSource.timeSamples / theAudioClip.frequency;
+        }
+    }
+
+    void Start() 
+    {
         score = 100;
 
-        GetComponent<AudioSource>().playOnAwake = !gameScene;
+        theAudioClip = gameScene ? inGameClip : introClip;
+        GetComponent<AudioSource>().clip = theAudioClip;
+        GetComponent<AudioSource>().Play();
 	}
 	
 	void Update () 
     {
         if (!gameScene)
         {
-            float t = Time.time - startTime;
+            float t = TimeElapsed;
 
-            int slideIndex = slideTimes.Length - 1;
+            int slideIndex = -1;
             for (int i = 0; i < slideTimes.Length - 1; ++i)
             {
                 if (t >= slideTimes[i] && t < slideTimes[i + 1])
@@ -61,7 +84,14 @@ public class GlobalGameStateBehavior : MonoBehaviour
                 }
             }
 
-            SetSlideIndex(slideIndex);
+            if (slideIndex != -1)
+            {
+                SetSlideIndex(slideIndex);
+            }
+            else
+            {
+                Application.LoadLevel(1);
+            }
         }
 	}
 
@@ -70,12 +100,15 @@ public class GlobalGameStateBehavior : MonoBehaviour
         if (prevSlideIndex != newSlideIndex)
         {
             var projector = GlobalObjects.GetSlideProjector();
-            projector.SetSlide(newSlideIndex);
+            projector.SetSlide(newSlideIndex, newSlideIndex >= 0 ? slideZooms[newSlideIndex] : 0);
             prevSlideIndex = newSlideIndex;
         }
     }
 
-    private float startTime;
+    private AudioClip theAudioClip;
     private int prevSlideIndex = -1;
-    private float[] slideTimes = new float[] { 0, 1, 5, 8, 12, 15 };
+
+    // Slide 0 is the pause before the first actual slide.
+    private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };
+    private float[] slideZooms = new float[] {     0, -2, -1,  3,  2  };
 }

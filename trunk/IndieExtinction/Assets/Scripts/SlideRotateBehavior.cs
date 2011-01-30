@@ -44,38 +44,46 @@ public class SlideRotateBehavior : MonoBehaviour
             veerCurve[j] = curve;
         }
 
-        SetSlideTexture(GetIntSlideIndex(slideIndex));
+        SetSlideTexture(GetIntSlideIndex(prevSlideIndex));
     }
 
 	public void Update() 
     {
-        int prevSlideIndex = GetIntSlideIndex(slideIndex);
+        float t = Time.time;
+
+        float slideRotation = .5f;
         if (slideIndexCurve != null)
         {
-            slideIndex = slideIndexCurve.Evaluate(Time.time);
-        }
-
-        if (prevSlideIndex != GetIntSlideIndex(slideIndex))
-        {
+            float slideIndex = slideIndexCurve.Evaluate(t);
+            slideRotation = slideIndex - Mathf.Floor(slideIndex);
             SetSlideTexture(GetIntSlideIndex(slideIndex));
         }
 
-        Vector3 veer = new Vector3(
+        var zoomOffset = Vector3.zero;
+        if (zoomCurve != null)
+        {
+            zoomOffset = Vector3.forward * zoomCurve.Evaluate(t);
+        }
+
+        var veerOffset = new Vector3(
             veerCurve[0].Evaluate(Time.time),
             veerCurve[1].Evaluate(Time.time),
             veerCurve[2].Evaluate(Time.time));
 
         transform.rotation = Quaternion.identity;
         transform.position = pivot.transform.position;
-        transform.Rotate(Vector3.right, (slideIndex - Mathf.Floor(slideIndex)) * 360);
-        transform.Translate(pivotOffset + veer);
+        transform.Rotate(Vector3.right, slideRotation * 360);
+        transform.Translate(pivotOffset + veerOffset + zoomOffset);
         transform.rotation = transform.rotation * pivotRotation;
     }
 
-    public void SetSlide(float targetSlideIndex)
+    public void SetSlide(float targetSlideIndex, float targetZoom)
     {
         var now = Time.time;
-        slideIndexCurve = AnimationCurve.EaseInOut(now, slideIndex, now + slideSwitchSeconds, targetSlideIndex);
+        slideIndexCurve = AnimationCurve.EaseInOut(now, prevSlideIndex, now + slideSwitchSeconds, targetSlideIndex);
+        prevSlideIndex = targetSlideIndex;
+        zoomCurve = AnimationCurve.EaseInOut(now, prevZoom, now + slideSwitchSeconds, targetZoom);
+        prevZoom = targetZoom;
     }
 
     private void SetSlideTexture(int index)
@@ -102,6 +110,8 @@ public class SlideRotateBehavior : MonoBehaviour
     private Vector3 pivotOffset;
     private Quaternion pivotRotation;
     private AnimationCurve slideIndexCurve;
-    private float slideIndex = -1;
+    private AnimationCurve zoomCurve;
+    private float prevZoom = 0;
+    private float prevSlideIndex = -1;
     private readonly List<Texture2D> slides = new List<Texture2D>();
 }
