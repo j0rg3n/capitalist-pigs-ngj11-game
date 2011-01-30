@@ -3,9 +3,9 @@ guid: e391a1cf22774b448be2449fff33be39
 AudioImporter:
   importerVersion: 4
   format: 0
-  quality: 0.64
+  quality: 0.639995
   3d: 1
   forceToMono: 0
   stream: 1
-  bitrate: 183999
+  bitrate: 183998
   useHardware: 0
