@@ -53,8 +53,8 @@ public class GlobalGameStateBehavior : MonoBehaviour
 
             if (pie <= 0)
             {
-                //  TOD: Load end fo game scjlien.
-                Application.LoadLevel(0);
+                persistentGameState.LoadDeath();
+                return;
             }
         }
     }
@@ -121,7 +121,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     {
         if (gameScene)
         {
-           houseCount = 0;
+            houseCount = 0;
             foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
             {
                 if (location.isPresent)
@@ -136,8 +136,14 @@ public class GlobalGameStateBehavior : MonoBehaviour
             float now = Time.time;
             if (now > nextWaveTime)
             {
-                int nextWaveCount = waveSizes[Mathf.Min(nextWaveIndex, waveSizes.Length - 1)];
-                nextWaveTime = now + waveTimes[Mathf.Min(nextWaveIndex, waveTimes.Length - 1)];
+                if (persistentGameState.IsLastWave(nextWaveIndex - 1))
+                {
+                    persistentGameState.LoadNextLevel();
+                    return;
+                }
+
+                int nextWaveCount = persistentGameState.GetWaveSize(nextWaveIndex);
+                nextWaveTime = now + persistentGameState.GetWaveTime(nextWaveIndex);
                 GlobalObjects.GetStudio().SpawnWave(nextWaveCount);
                 ++nextWaveIndex;
             }
@@ -209,10 +215,9 @@ public class GlobalGameStateBehavior : MonoBehaviour
     private float nextWaveTime = float.MaxValue;
     private int nextWaveIndex = 0;
 
-    private int[] waveSizes = new int[] { 16, 32, 32, 32, 40 };
-    private int[] waveTimes = new int[] { 16, 12, 9, 8,  };
-
     // Slide 0 is the pause before the first actual slide.
     private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };
     private float[] slideZooms = new float[] {     0, -2, -1,  3,  2  };
+
+    private static PersistentGameState persistentGameState = new PersistentGameState();
 }

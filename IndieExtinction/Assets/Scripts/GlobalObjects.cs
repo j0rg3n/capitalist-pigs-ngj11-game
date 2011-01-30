@@ -10,8 +10,14 @@ public class GlobalObjects
 
 	public static Camera GetMainCamera()
 	{
-		return GameObject.Find(MAIN_CAMERA).GetComponent<Camera>();
-	}
+        var cam = GameObject.Find(MAIN_CAMERA);
+        if (cam == null)
+        {
+            // HACK: Check for misspelled name, too.
+            cam = GameObject.Find("main Camera");
+        }
+        return cam.GetComponent<Camera>();
+    }
 
 	public static MeshFilter GetMapMesh()
 	{
