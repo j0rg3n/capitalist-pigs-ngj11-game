@@ -8,6 +8,7 @@ public class SpriteAnimator : MonoBehaviour {
     public float UpdateTime = 0.2f;
     public int currentFrame = 1;
     public bool Loop = true;
+	public bool StopLooping = true;
     public bool respectDirection = true;
     // public Texture2D MainTexture;
     public Vector2 Rundirection;
@@ -57,8 +58,18 @@ public class SpriteAnimator : MonoBehaviour {
             Vector2 val = renderer.material.mainTextureOffset;
             val.x = (float)((1.0f / Frames)* currentFrame);
             renderer.material.mainTextureOffset = val;
-            if (Loop)
+
+			if (Loop && StopLooping && currentFrame == 4)
+			{
+				Loop = false;
+				StopLooping = false;
+			}
+
+			if (Loop)
                 currentFrame += 1;
+			else
+				currentFrame = 4;
+			
             
             if (currentFrame > Frames)
             {

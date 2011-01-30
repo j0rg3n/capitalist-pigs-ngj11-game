@@ -324,9 +324,11 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					indieDev.aiDevGuy.waiting = false;
 					indieDev.aiDevGuy.dontWait = DevGuy.DONT_WAIT;
 					indieDev.aiDevGuy.lastHousePointInd = waver.PositionToBlockIndex(indieDev.aiDevGuy.Position);
+					indieDev.StartAnim();
 				}
 				else
 				{
+					indieDev.StopAnim();
 					continue;
 				}
 			}
@@ -338,6 +340,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					indieDev.aiDevGuy.waiting = false;
 					indieDev.aiDevGuy.dontWait = 0f;
 				}
+				indieDev.StartAnim();
 			}
 
 			DevToProcess d = new DevToProcess();
