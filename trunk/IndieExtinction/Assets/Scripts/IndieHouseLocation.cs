@@ -24,7 +24,7 @@ namespace Irrelevant.Assets.Scripts
 
 		public bool IsFull()
 		{
-			return studio != null ? studio.indieDevCount >= MAX_DEVS_IN_INDIE_HOUSE : false;
+			return studio != null ? studio.IndieDevCount >= MAX_DEVS_IN_INDIE_HOUSE : false;
 		}
 
 		public bool CanCreate()
@@ -60,7 +60,7 @@ namespace Irrelevant.Assets.Scripts
 
 		public void AddDev(DevGuy devGuy)
 		{
-			studio.indieDevCount++;
+			studio.IndieDevCount++;
 			IndieStudioBehavior.Destroy(devGuy.indieDevBehaviour.gameObject);
 		}
 
@@ -78,8 +78,7 @@ namespace Irrelevant.Assets.Scripts
 
 			studio = buildingTransform.GetComponent<IndieStudioBehavior>();
 			studio.location = this;
-			studio.indieDevCount = waitingCount;
-			studio.devTimeSeconds = 40 / studio.indieDevCount;
+			studio.IndieDevCount = waitingCount;
 			waitingCount = 0;
 
 			foreach (DevGuy devGuy in waitingDevs)

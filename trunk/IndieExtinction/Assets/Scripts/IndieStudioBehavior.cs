@@ -4,10 +4,28 @@ using Irrelevant.Assets.Scripts;
 
 public class IndieStudioBehavior : StudioBehaviorBase
 {
-    public int indieDevCount = 50;
-    public float devTimeSeconds = 5;
+    /// <summary>
+    /// Time taken for one developer to finish a game.
+    /// </summary>
+    public float devTimeSeconds = 60;
 
 	public IndieHouseLocation location;
+
+    public int IndieDevCount
+    {
+        get { return indieDevCount; }
+        set 
+        { 
+            startDevelopment = Development;
+            startTime = Time.time;
+            indieDevCount = value;
+        }
+    }
+
+    public float Development
+    {
+        get { return startDevelopment + (Time.time - startTime) / devTimeSeconds * indieDevCount; }
+    }
 
     void Start() 
     {
@@ -22,8 +40,8 @@ public class IndieStudioBehavior : StudioBehaviorBase
         label.transform.position = new Vector2(basePosition.x / Screen.width,
             basePosition.y / Screen.height);
 
-        float elapsed = Time.time - startTime;        
-        if (elapsed > devTimeSeconds)
+        var development = Development;
+        if (development >= 1)
         {
 			System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
             SpawnIndieDevs(indieDevCount, location.houseTileInd);
@@ -33,8 +51,10 @@ public class IndieStudioBehavior : StudioBehaviorBase
         }
 
         var pieChart = GetComponent<PieChartGUIBehavior>();
-        pieChart.amount = elapsed / devTimeSeconds;
+        pieChart.amount = development;
 	}
 
     private float startTime;
+    private float startDevelopment;
+    private int indieDevCount = 0;
 }

@@ -12,7 +12,7 @@ public class guiScriptBehavior : MonoBehaviour
 
     void OnGUI()
     {
-        if (!GetComponent<GlobalGameStateBehavior>().gameScene)
+        if (!GetComponent<GlobalGameStateBehavior>().IsGameScene)
         {
             return;
         }
