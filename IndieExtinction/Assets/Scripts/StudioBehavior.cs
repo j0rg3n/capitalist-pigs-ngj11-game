@@ -4,9 +4,8 @@ using Irrelevant.Assets.Scripts;
 
 public class StudioBehavior : StudioBehaviorBase
 {
-
-	public void OnMouseClicked(IndexedHit hitInfo)
+	public void SpawnWave(int count)
 	{
-        SpawnIndieDevs(75, -1);
+        SpawnIndieDevs(count, -1);
     }
 }

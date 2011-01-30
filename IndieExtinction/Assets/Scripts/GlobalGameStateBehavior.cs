@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Irrelevant.Assets.Scripts;
 
 public class GlobalGameStateBehavior : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
     {
         Pie -= 10;
         audio.PlayOneShot(gameDevEnded);
+        lastPieLossTime = Time.time;
     }
 
     private float Pie
@@ -50,6 +52,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         }
     }
 
+    // TODO: Move VisualPie into guiScriptBehavior.
     public float VisualPie
     {
         get { return visualPieCurve != null ? visualPieCurve.Evaluate(Time.time) : pie; }
@@ -102,14 +105,54 @@ public class GlobalGameStateBehavior : MonoBehaviour
         theAudioClip = gameScene ? inGameClip : introClip;
         GetComponent<AudioSource>().clip = theAudioClip;
         GetComponent<AudioSource>().Play();
+
+        nextWaveTime = Time.time + MUSIC_WINDUP_TIME;
 	}
 	
 	void Update () 
     {
         if (gameScene)
         {
+            int houseCount = 0;
+            foreach (IndieHouseLocation location in GlobalObjects.indieHouseLocations)
+            {
+                if (location.isPresent)
+                {
+                    ++houseCount;
+                }
+            }
+
             var healtPie = GlobalObjects.GetHealthPie();
             healtPie.amount = 1 - VisualPie / 100.0f;
+
+            float now = Time.time;
+            if (now > nextWaveTime)
+            {
+                int nextWaveCount = waveSizes[Mathf.Min(nextWaveIndex, waveSizes.Length - 1)];
+                nextWaveTime = now + waveTimes[Mathf.Min(nextWaveIndex, waveTimes.Length - 1)];
+                GlobalObjects.GetStudio().SpawnWave(nextWaveCount);
+                ++nextWaveIndex;
+            }
+
+            string newAlert = null;
+            bool newAlertFlashing = false;
+            if (nextWaveTime - now < ALERT_WAVE_SECONDS)
+            {
+                newAlert = string.Format("Cutbacks due in {0} seconds...", Mathf.CeilToInt(nextWaveTime - now));
+            }
+            else if (now - lastPieLossTime < PIE_LOSS_ALERT_TIME)
+            {
+                newAlert = string.Format("You lost another market share!");
+                newAlertFlashing = true;
+            }
+            else if (houseCount > 0)
+            {
+                newAlert = "Click the houses!";
+                newAlertFlashing = true;
+            }
+
+            GlobalObjects.GetGUIScriptBehavior().alert = newAlert;
+            GlobalObjects.GetGUIScriptBehavior().alertFlashing = newAlertFlashing;
         }
         else
         {
@@ -146,10 +189,20 @@ public class GlobalGameStateBehavior : MonoBehaviour
         }
     }
 
+    private const int ALERT_WAVE_SECONDS = 3;
+    private const int PIE_LOSS_ALERT_TIME = 3;
+    private const float MUSIC_WINDUP_TIME = 8;
+
+    private float lastPieLossTime = float.MinValue;
     private bool gameScene;
     private AudioClip theAudioClip;
     private int prevSlideIndex = -1;
     private AnimationCurve visualPieCurve;
+    private float nextWaveTime = float.MaxValue;
+    private int nextWaveIndex = 0;
+
+    private int[] waveSizes = new int[] { 16, 32, 32, 32, 40 };
+    private int[] waveTimes = new int[] { 16, 12, 9, 8,  };
 
     // Slide 0 is the pause before the first actual slide.
     private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };
