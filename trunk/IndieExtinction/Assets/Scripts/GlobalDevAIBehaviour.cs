@@ -31,7 +31,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public Transform debugPrefab;
 
 	// TODO:3 consider keeping this in a single-dimention array called map
-	int[,] levelMatrix; // 0 - not passable, 1 - passable
+	public int[,] levelMatrix; // 0 - not passable, 1 - passable
 	int startSpawnPointInd = -1;
 	public struct HouseIndices
 	{
@@ -140,10 +140,12 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 	void CalculateInitialRoutes()
 	{
+		/*
 		for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
 		{
 			GlobalObjects.indieHouseLocations[h].waver.StartWave(GlobalObjects.indieHouseLocations[h].houseTileInd, levelMatrix);
 		}
+		 */
 
 		Update();
 	}
@@ -178,7 +180,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	bool CheckImmediateProximity(DevGuy devGuy, int devBlockInd, HouseIndices houseInds)
 	{
 		IndieHouseLocation location = GlobalObjects.indieHouseLocations[houseInds.houseInd];
-		bool overlaps = location.isPresent && location.Overlaps(devGuy);
+		bool overlaps = location.isPresent && location.Overlaps(devGuy) && devGuy.lastHousePointInd != houseInds.houseTileInd;
 
 		if (overlaps)
 		{
@@ -355,6 +357,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 			Waver useWaver = waver;
 			bool usingDefaultWaver = true;
+			
 			for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
 			{
 				if (GlobalObjects.indieHouseLocations[h].houseTileInd == devsToProcess[i].currentBlock)
@@ -364,12 +367,13 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					break;
 				}
 			}
-			bool hasTracks = usingDefaultWaver ? waver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : waver.HasTracks();
+			
+			bool hasTracks = usingDefaultWaver ? useWaver.StartWave(devsToProcess[i].currentBlock, levelMatrix) : useWaver.HasTracks();
 			if (hasTracks)
 			{
 				for (int k = i; k < j; ++k)
 				{
-					devsToProcess[k].devGuy.currentTrack = waver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
+					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
 					//UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));

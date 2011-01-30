@@ -84,6 +84,8 @@ namespace Irrelevant.Assets.Scripts
 				IndieStudioBehavior.Destroy(indieDev.gameObject);
 			}
 			waitingDevs.Clear();
+
+			waver.StartWave(houseTileInd, GlobalObjects.GetDevAIBehaviour().levelMatrix);
 		}
 
 		public void HouseDestroyed()
