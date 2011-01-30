@@ -3,25 +3,22 @@ using System.Collections;
 
 public class SoftwareMouseCursor : MonoBehaviour  
  {
-    // The texture for the mouse cursor  
-    public Texture2D _mouseCursorTexture;// = (Texture2D)Resources.Load("Textures/hand_default.png");
+    // The texture for the mouse cursor
+    public Texture2D[] texArray;
+    Texture2D cursorTex;
+    public float Scale = 0.2f;
 
-    // Default GUIStyle needs a modification to properly display  
-    // the mouse cursor wihtin a Label  
-    GUIStyle _mouseCursorStyle;
-    
+
+    private Vector2 OnClickOffset =  new Vector2(8,6);
+    private Vector2 CurOffset;
+    public float offsetTime = 0.5f;
+    private float times = 0.0f;
+    bool clicked = false;
+    bool peaked = false;
     void Start()  
     {
-        //Screen.showCursor = false;
-        
-        // If the mouse cursor texture is not set within the Unity Editor
-        /*if (_mouseCursorTexture == null)
-        {
-            _mouseCursorTexture = (Texture2D)Resources.Load("Textures/hand_default");
-        }*/
-        _mouseCursorTexture.Resize(_mouseCursorTexture.width / 10, _mouseCursorTexture.height / 10);
-        _mouseCursorStyle = new GUIStyle();
-        _mouseCursorStyle.padding = new RectOffset(); // Clear the default padding  
+        Screen.showCursor = false;
+        cursorTex = texArray[1];
      }  
     
      /// <summary>  
@@ -29,31 +26,35 @@ public class SoftwareMouseCursor : MonoBehaviour
      /// </summary>
      private void OnGUI()
      {
-         // Determine the position of the software mouse cursor based on the mouse inputs
-         // Note that the vertical position needs to be inverted since the mouse position
-         // (0,0) is at the bottom-left of the screen while the GUI position (0, 0) is at
-         // the top-left of the screen.
-         //Rect mousePosition = new Rect(Input.mousePosition.x,  Screen.height - Input.mousePosition.y, _mouseCursorTexture.width, 
-         //    _mouseCursorTexture.height);
-         Rect mousePosition = new Rect(Input.mousePosition.x - _mouseCursorTexture.width,
-             Screen.height - Input.mousePosition.y - _mouseCursorTexture.height, 
-             _mouseCursorTexture.width,
-             _mouseCursorTexture.height);
-         GUI.DrawTexture(mousePosition, _mouseCursorTexture);
-     }
-    
-     /// <summary>
-     /// Draw the mouse cursor after OnGUI has completed.  This ensures
-     /// that the mouse cursor is drawn above any GUI.Window().
-     /// </summary>
-     /// <param name="mousePosition">The position of the mouse cursor</param>
-     /// <returns>Coroutine instance</returns>
-     private IEnumerator DrawMouseCursor(Rect mousePosition)
-     {
-         // Wait until OnGUI() has been called
-         yield return new WaitForEndOfFrame();   
+         if (clicked)
+         {
+             if (!peaked)
+                times += Time.deltaTime;
+             else
+                 times -= Time.deltaTime;
 
-         // Requires Unity Pro
-         Graphics.DrawTexture(mousePosition, _mouseCursorTexture);
+             CurOffset =( OnClickOffset * (times/offsetTime));
+             if (times > offsetTime)
+             {
+                peaked = true;
+             }
+             if (peaked && times < 0.0f)
+             {
+                 CurOffset = Vector2.zero;
+                 peaked = false;
+                 clicked = false;
+                 times = 0.0f;
+             }
+         }
+
+         if (Event.current.type == EventType.MouseDown)
+         {
+             cursorTex = texArray[0];
+             clicked = true;
+         }
+
+         Vector3 mousePos = Input.mousePosition;
+         Rect pos = new Rect(mousePos.x - (float)(0.88f * cursorTex.width * Scale) + CurOffset.x, (Screen.height - mousePos.y) - (int)(0.55f * Scale * cursorTex.height)+CurOffset.y, (int)(cursorTex.width * Scale), (int)(cursorTex.height * Scale));
+         GUI.Label(pos, cursorTex);
      }
 }

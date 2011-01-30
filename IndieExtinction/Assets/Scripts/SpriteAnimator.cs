@@ -18,8 +18,6 @@ public class SpriteAnimator : MonoBehaviour {
             renderer.material = myMaterial;
     }
 
-    
-    
 	// Use this for initialization
 	void Start () 
     {
