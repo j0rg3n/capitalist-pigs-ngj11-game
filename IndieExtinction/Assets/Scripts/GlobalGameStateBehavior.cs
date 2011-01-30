@@ -231,7 +231,7 @@ public class GlobalGameStateBehavior : MonoBehaviour
         if (prevSlideIndex != newSlideIndex)
         {
             var projector = GlobalObjects.GetSlideProjector();
-            projector.SetSlide(newSlideIndex, newSlideIndex >= 0 ? slideZooms[newSlideIndex] : 0);
+            projector.SetSlide(newSlideIndex, newSlideIndex >= 0 ? slideZooms[Mathf.Min(newSlideIndex, slideZooms.Length - 1)] : 0);
             prevSlideIndex = newSlideIndex;
         }
     }
@@ -250,8 +250,19 @@ public class GlobalGameStateBehavior : MonoBehaviour
     public bool gameOver = false;
 
     // Slide 0 is the pause before the first actual slide.
-    private float[] slideTimes = new float[] { 0,  0,  7, 14, 21,  26 };
-    private float[] slideZooms = new float[] {     0, -2, -1,  3,  2  };
+    private float[] slideTimes = new float[] { 0,  
+        0,     // credits
+        3,     // 
+        6.5f,     // graph
+        10.25f,     // thinking
+        14,  // window looking out 
+        16,  // closeup 1
+        17.5f,    // closeup 2
+        20.5f,    // I've got it!
+        22.5f,  // Redundancies!
+        25,    // Title
+        30 };
+    private float[] slideZooms = new float[] { 0, -2, -1,  0,  0  };
 
     private static PersistentGameState persistentGameState = new PersistentGameState();
 }
