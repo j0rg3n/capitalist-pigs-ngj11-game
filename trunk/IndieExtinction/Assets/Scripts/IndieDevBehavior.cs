@@ -37,6 +37,17 @@ public class IndieDevBehavior : BillboardBehavior
 
 		aiDevGuy.Position = MathUtil.GetLocalPositionFromWorldCorrected(GlobalObjects.GetMapMesh(), transform.position);
 	}
+
+	public void StopAnim()
+	{
+		GetComponent<SpriteAnimator>().StopLooping = true;
+	}
+
+	public void StartAnim()
+	{
+		GetComponent<SpriteAnimator>().Loop = true;
+		GetComponent<SpriteAnimator>().StopLooping = false;
+	}
     
     public void OnMouseClicked(IndexedHit hitInfo)
     {
