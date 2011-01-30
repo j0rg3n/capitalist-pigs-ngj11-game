@@ -6,6 +6,7 @@ namespace Irrelevant.Assets.Scripts.AI
 	public class Waver
 	{
 		public GlobalDevAIBehaviour AI;
+		public bool needsRun = true;
 
 
 		public const int STAY_AWAY_FROM_SP_DIST_DEFENSIVE = 3;
@@ -194,6 +195,7 @@ namespace Irrelevant.Assets.Scripts.AI
 				track.PopNext();
 			}
 
+			needsRun = false;
 			return completeTracks.Count > 0;
 		}
 
