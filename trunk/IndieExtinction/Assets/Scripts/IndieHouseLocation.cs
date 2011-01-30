@@ -10,7 +10,7 @@ namespace Irrelevant.Assets.Scripts
 	public class IndieHouseLocation
 	{
 		public const int MAX_DEVS_IN_INDIE_HOUSE = 15;
-		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 10;
+		public const int MIN_DEVS_TO_CREATE_A_HOUSE = 8;
 		public const float CURSE_DURATION = 5f;
 
 		public int houseTileInd = -1;

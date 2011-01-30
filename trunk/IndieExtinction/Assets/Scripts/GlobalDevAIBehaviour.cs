@@ -9,7 +9,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public float BlockSize = 3f; // units width of a block
 	public int MapWidth = 60;
 	public int MapHeight = 40;
-	public float calmSpeed = 0.05f;
+	public float calmSpeed = 0.12f;
 	public float hasteSpeedMultiplier = 1.5f;
 
 	public int MapSize;

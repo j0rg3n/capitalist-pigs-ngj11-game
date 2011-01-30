@@ -1,10 +1,12 @@
 fileFormatVersion: 1
-guid: d4f3c176e0927374e81f494295cfc5c2
+guid: 75bd927efc131d844846d6344c2e0031
 TrueTypeFontImporter:
   importerVersion: 1
-  size: 16
+  size: 60
   case: -2
   antiAlias: 0
   includeFontData: 1
   use2xBehaviour: 0
-  style: 0
+  style: 1
+  fontNames:
+    name: 
