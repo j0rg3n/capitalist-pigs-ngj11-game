@@ -183,11 +183,19 @@ namespace Irrelevant.Assets.Scripts.AI
 				}
 				if (!foundNeighbour && nextTrack.Length() > 1)
 				{
+					System.Diagnostics.Debug.Assert(nextTrack.Length() > 0);
 					completeTracks.Add(nextTrack);
 				}
 			}
 
-			completeTracks.AddRange(tracks);
+			foreach (Track track in tracks)
+			{
+				if (track.Length() > 1)
+				{
+					System.Diagnostics.Debug.Assert(track.Length() > 0);
+					completeTracks.Add(track);
+				}
+			}
 
 			// pop away the start block
 			foreach (Track track in completeTracks)
@@ -243,6 +251,7 @@ namespace Irrelevant.Assets.Scripts.AI
 			// evaluate tracks
 			foreach (Track track in completeTracks)
 			{
+				System.Diagnostics.Debug.Assert(track.Length() > 0);
 				int houseOnTheTrack = 0;
 				for (int h = 0; h < AI.destHouseInds.Count; h++)
 				{

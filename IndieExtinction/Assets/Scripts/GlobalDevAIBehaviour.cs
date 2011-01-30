@@ -21,6 +21,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public Texture2D mapFieldTexture;
 	public Transform buildingPrefab;
 	public Transform startBuildingPrefab;
+	
+	IndieHouseLocation startLocation;
 
 	public Transform InstantiateBuilding()
 	{
@@ -104,6 +106,12 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					var offset = startBuilding.GetComponent<MeshFilter>().mesh.bounds.extents;
 					offset.Scale(Vector3.up);
 					startBuilding.position = baseWorldPos + offset;
+
+					startLocation = new IndieHouseLocation();
+					startLocation.houseTileInd = waver.BlockCoordsToIndex(i, j);
+					startLocation.locationInd = -1;
+					startLocation.waver = new Waver();
+					startLocation.waver.AI = this;
 				}
 				if (pixel == colorIndieHouse)
 				{
@@ -146,6 +154,8 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			GlobalObjects.indieHouseLocations[h].waver.StartWave(GlobalObjects.indieHouseLocations[h].houseTileInd, levelMatrix);
 		}
 		 */
+
+		startLocation.waver.StartWave(startLocation.houseTileInd, levelMatrix);
 
 		Update();
 	}
@@ -373,13 +383,20 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
 			Waver useWaver = waver;
 			useWaver.needsRun = true;
-			
-			for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
+
+			if (devsToProcess[i].currentBlock == startLocation.houseTileInd)
 			{
-				if (GlobalObjects.indieHouseLocations[h].houseTileInd == devsToProcess[i].currentBlock)
+				useWaver = startLocation.waver;
+			}
+			else
+			{
+				for (int h = 0; h < GlobalObjects.indieHouseLocations.Count; h++)
 				{
-					useWaver = GlobalObjects.indieHouseLocations[h].waver;
-					break;
+					if (GlobalObjects.indieHouseLocations[h].houseTileInd == devsToProcess[i].currentBlock)
+					{
+						useWaver = GlobalObjects.indieHouseLocations[h].waver;
+						break;
+					}
 				}
 			}
 			
@@ -388,7 +405,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			{
 				for (int k = i; k < j; ++k)
 				{
-					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex);
+					devsToProcess[k].devGuy.currentTrack = useWaver.ChooseTrack(devsToProcess[k].p1SPInd, devsToProcess[k].p2SPInd, devsToProcess[k].devGuy.lastVisitedBlockIndex).Clone();
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p1SPInd));
 					System.Diagnostics.Debug.Assert(devsToProcess[k].devGuy.currentTrack == null || !devsToProcess[k].devGuy.currentTrack.HasBlock(devsToProcess[k].p2SPInd));
 					//UnityEngine.Debug.Log(string.Format("Gave track to {0}", k));
