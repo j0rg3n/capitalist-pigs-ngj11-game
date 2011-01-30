@@ -13,6 +13,7 @@ public class SlideRotateBehavior : MonoBehaviour
 
     public Transform pivot;
 
+    public float veerAmplitude = .25f;
     public float slideSwitchSeconds = 1;
 
 	public void Start()
@@ -27,6 +28,21 @@ public class SlideRotateBehavior : MonoBehaviour
         pivotOffset = transform.position - pivot.transform.position;
         pivotRotation = transform.rotation;
         pivot.GetComponent<MeshRenderer>().enabled = false;
+
+        for (int j = 0; j < 3; ++j)
+        {
+            var curve = new AnimationCurve();
+            curve.preWrapMode = WrapMode.Loop;
+            curve.postWrapMode = WrapMode.Loop;
+            
+            float t = 0;
+            for (int i = 0; i < 20; ++i)
+            {
+                curve.AddKey(i, Random.Range(-.1f, .1f) * veerAmplitude);
+                t += Random.Range(.25f, 3f);
+            }
+            veerCurve[j] = curve;
+        }
 
         SetSlideTexture(GetIntSlideIndex(slideIndex));
     }
@@ -44,10 +60,15 @@ public class SlideRotateBehavior : MonoBehaviour
             SetSlideTexture(GetIntSlideIndex(slideIndex));
         }
 
+        Vector3 veer = new Vector3(
+            veerCurve[0].Evaluate(Time.time),
+            veerCurve[1].Evaluate(Time.time),
+            veerCurve[2].Evaluate(Time.time));
+
         transform.rotation = Quaternion.identity;
         transform.position = pivot.transform.position;
         transform.Rotate(Vector3.right, (slideIndex - Mathf.Floor(slideIndex)) * 360);
-        transform.Translate(pivotOffset);
+        transform.Translate(pivotOffset + veer);
         transform.rotation = transform.rotation * pivotRotation;
     }
 
@@ -77,6 +98,7 @@ public class SlideRotateBehavior : MonoBehaviour
         return (int)(slideIndex + 1.5f) - 1;
     }
 
+    private readonly AnimationCurve[] veerCurve = new AnimationCurve[3];
     private Vector3 pivotOffset;
     private Quaternion pivotRotation;
     private AnimationCurve slideIndexCurve;
