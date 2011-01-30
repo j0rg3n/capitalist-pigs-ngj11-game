@@ -144,16 +144,16 @@ public class GlobalGameStateBehavior : MonoBehaviour
             bool newAlertFlashing = false;
             if (nextWaveTime - now < ALERT_WAVE_SECONDS)
             {
-                newAlert = string.Format("Cutbacks due in {0} seconds...", Mathf.CeilToInt(nextWaveTime - now));
+                newAlert = string.Format(CheeringMessages.GetMessage(MessageType.Wave), Mathf.CeilToInt(nextWaveTime - now));
             }
             else if (now - lastPieLossTime < PIE_LOSS_ALERT_TIME)
             {
-                newAlert = string.Format("You lost another market share!");
+                newAlert = CheeringMessages.GetMessage(MessageType.Loss);
                 newAlertFlashing = true;
             }
             else if (houseCount > 0)
             {
-                newAlert = "Click the houses!";
+                newAlert = CheeringMessages.GetMessage(MessageType.Click);
                 newAlertFlashing = true;
             }
 
