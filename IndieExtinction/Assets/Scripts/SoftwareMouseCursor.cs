@@ -18,7 +18,7 @@ public class SoftwareMouseCursor : MonoBehaviour
     void Start()  
     {
         Screen.showCursor = false;
-        cursorTex = texArray[1];
+        cursorTex = texArray[0];
      }  
     
      /// <summary>  
@@ -29,14 +29,21 @@ public class SoftwareMouseCursor : MonoBehaviour
          if (clicked)
          {
              if (!peaked)
-                times += Time.deltaTime;
+             {
+                 times += Time.deltaTime;
+                 //cursorTex = texArray[0];
+             }
              else
+             {
+                 //cursorTex = texArray[1];
                  times -= Time.deltaTime;
+             }
 
              CurOffset =( OnClickOffset * (times/offsetTime));
              if (times > offsetTime)
              {
                 peaked = true;
+                
              }
              if (peaked && times < 0.0f)
              {
