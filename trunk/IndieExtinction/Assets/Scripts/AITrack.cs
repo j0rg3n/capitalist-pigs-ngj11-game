@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Irrelevant.Assets.Scripts.AI
 {
-	public  class Track
+	public class Track
 	{
 		public Waver waver;
 
@@ -22,6 +22,15 @@ namespace Irrelevant.Assets.Scripts.AI
 		{
 			this.waver = waver;
 			track.Add(startBlock);
+		}
+
+		public Track Clone()
+		{
+			Track clone = new Track(waver);
+			clone.track.AddRange(track);
+			clone.grade = grade;
+			clone.makeHaste = makeHaste;
+			return clone;
 		}
 
 		public bool CanExtend()
