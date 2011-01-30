@@ -47,6 +47,7 @@ public class GlobalObjects
 
 	private const string MAIN_CAMERA = "Main Camera";
 	private const string MAP = "Map";
+
     private static T FindObjectOfType<T>() where T : Object
     {
         return (T)Object.FindObjectOfType(typeof(T));

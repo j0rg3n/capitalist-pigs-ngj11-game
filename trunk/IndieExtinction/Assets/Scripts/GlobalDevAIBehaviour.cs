@@ -9,7 +9,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public float BlockSize = 3f; // units width of a block
 	public int MapWidth = 60;
 	public int MapHeight = 40;
-	public float calmSpeed = 0.05f;
+	public float calmSpeed = 0.03f;
 	public float hasteSpeedMultiplier = 1.5f;
 
 	public int MapSize;
@@ -171,10 +171,21 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 		return levelMatrix[ClampX(i), ClampY(j)] > 0;
 	}
 
-	bool CheckImmediateProximity(DevGuy devGuy, HouseIndices houseInds)
+	bool CheckImmediateProximity(DevGuy devGuy, int devBlockInd, HouseIndices houseInds)
 	{
 		IndieHouseLocation location = GlobalObjects.indieHouseLocations[houseInds.houseInd];
-		if (location.Overlaps(devGuy))
+		bool overlaps = false;
+		if (!location.isPresent)
+		{
+			overlaps = location.houseTileInd == devBlockInd;
+		}
+		else
+		{
+			overlaps = location.Overlaps(devGuy);
+		}
+
+
+		if (overlaps)
 		{
 			if (location.isPresent)
 			{
@@ -242,9 +253,10 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 				continue;
 
 			DevGuy devGuy = indieDev.aiDevGuy;
+			int currentBlock = waver.PositionToBlockIndex(devGuy.Position);
 			for (int h = 0; h < destHouseInds.Count; h++)
 			{
-				bool bSkip = CheckImmediateProximity(devGuy, destHouseInds[h]);
+				bool bSkip = CheckImmediateProximity(devGuy, currentBlock, destHouseInds[h]);
 				if (bSkip)
 					continue;
 			}
@@ -279,7 +291,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 			d.devGuy = devGuy;
 			d.hasTrack = devGuy.currentTrack != null;
 			//UnityEngine.Debug.Log(string.Format("pos {0} {1}", devGuy.Position.x, devGuy.Position.y));
-			d.currentBlock = waver.PositionToBlockIndex(devGuy.Position);
+			d.currentBlock = currentBlock;
 			UnityEngine.Debug.Log(string.Format("current block ind {0}", d.currentBlock));
 			d.p1SPInd = p1SPInd;
 			d.p2SPInd = p2SPInd;
@@ -424,7 +436,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 
         Vector2 directionN = direction;
 		directionN.Normalize();
-        float dist = direction.magnitude; // TODO:m is this the length
+        float dist = direction.magnitude;
         destinationReached = dist <= trajectory;
         if (destinationReached)
         {

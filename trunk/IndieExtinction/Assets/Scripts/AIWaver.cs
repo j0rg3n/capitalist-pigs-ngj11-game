@@ -8,7 +8,7 @@ namespace Irrelevant.Assets.Scripts.AI
 		public GlobalDevAIBehaviour AI;
 
 
-		public const int STAY_AWAY_FROM_SP_DIST_DEFENSIVE = 1;
+		public const int STAY_AWAY_FROM_SP_DIST_DEFENSIVE = 3;
 		public static int CompareTracks(Track a, Track b)
 		{
 			return b.grade - a.grade;
