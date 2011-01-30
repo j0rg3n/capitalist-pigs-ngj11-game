@@ -44,6 +44,8 @@ public class IndieStudioBehavior : StudioBehaviorBase
         if (development >= 1)
         {
 			System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
+
+            GlobalObjects.GetGlobbalGameState().Pie -= 10;
             SpawnIndieDevs(indieDevCount, location.houseTileInd);
 			location.HouseDestroyed();
             Destroy(gameObject);
