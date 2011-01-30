@@ -285,7 +285,7 @@ namespace Irrelevant.Assets.Scripts.AI
 					break;
 			}
 
-			int chosenTrackInd = Random.Range(0, bestGradeCnt - 1);
+			int chosenTrackInd = Random.Range(0, bestGradeCnt);
 			Track chosen = completeTracks[chosenTrackInd];
 
 			// make sure we don't choose a track leading to a spawning point

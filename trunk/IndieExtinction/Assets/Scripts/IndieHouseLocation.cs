@@ -41,7 +41,7 @@ namespace Irrelevant.Assets.Scripts
 			Vector3 worldPos = devGuy.indieDevBehaviour.GetAIWorldTransform();
 			if (isPresent)
 			{
-				MeshFilter studioMesh = studio.GetComponent<MeshFilter>(); // TODO:m this has been deleted :(
+				MeshFilter studioMesh = studio.GetComponent<MeshFilter>();
 				Transform transform = studio.GetComponent<Transform>();
 
 				var bounds = studioMesh.mesh.bounds;

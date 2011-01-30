@@ -35,6 +35,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     void Start() 
     {
         startTime = Time.time;
+		startDevelopment = 0;
         audio.PlayOneShot(pop);
 	}
 	
@@ -49,7 +50,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
         if (!isSetForDestruction)
         {
             var development = Development;
-            if (development >= 1)
+			if (development >= 1)
             {
                 System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
 
@@ -69,7 +70,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         if (!isSetForDestruction)
         {
-            IndieDevCount--;
+			IndieDevCount = IndieDevCount - 1;
             System.Diagnostics.Debug.Assert(location.houseTileInd >= 0);
 
             SpawnIndieDevs(1, location.houseTileInd);
@@ -86,7 +87,7 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         if (Explotions.Length > 0)
         {
-            AudioClip explotion = Explotions[Random.Range(0, Explotions.Length-1)];
+            AudioClip explotion = Explotions[Random.Range(0, Explotions.Length)];
             if (explotion != null)
             {
                 audio.PlayOneShot(explotion);
@@ -99,11 +100,11 @@ public class IndieStudioBehavior : StudioBehaviorBase
     {
         yield return new WaitForSeconds(seconds);
 		//location.HouseDestroyed();
-        Destroy(gameObject);
+		Destroy(gameObject);
     }
 
     private float startTime;
-    private float startDevelopment;
+    private float startDevelopment = 0;
     private int indieDevCount = 0;
 
     private bool isSetForDestruction = false;
