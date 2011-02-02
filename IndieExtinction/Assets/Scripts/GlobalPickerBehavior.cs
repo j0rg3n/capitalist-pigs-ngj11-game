@@ -21,7 +21,7 @@ public class GlobalPickerBehavior : MonoBehaviour
         var globalGameState = GetComponent<GlobalGameStateBehavior>();
         if (globalGameState.GameOver)
         {
-            if (mouseClick && globalGameState.SecondsSinceGameOver > 3.5f)
+            if (mouseClick && globalGameState.SecondsSinceGameOver > 10.0f)
             {
                 globalGameState.LoadIntroLevel();
                 return; 

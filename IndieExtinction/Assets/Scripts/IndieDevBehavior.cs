@@ -87,19 +87,21 @@ public class IndieDevBehavior : BillboardBehavior
 
 	public Vector3 GetAIWorldTransform()
 	{
-		Vector3 oldLocalPos = MathUtil.GetLocalPositionFromWorld(GlobalObjects.GetMapMesh(), transform.position);
-		Vector3 localPos = new Vector3(aiDevGuy.Position.x, 0, aiDevGuy.Position.y);
-		localPos.x *= 10f;
-		localPos.z *= 10f;
-		localPos.x -= 5f;
-		localPos.z -= 5f;
-		localPos.y = oldLocalPos.y;
-		localPos.x = -localPos.x;
-		Vector3 newWS = transform.TransformPoint(localPos);
+		// TODO: Maintain the guy's coordinates in AI map space, not 0..1 range.
+		Vector3 newWS = MathUtil.GetWorldPositionFromGridCoordinate(GlobalObjects.GetMapMesh(), 
+			aiDevGuy.Position.x, 
+			aiDevGuy.Position.y,
+			1, 
+			1);
+		
+		// TODO: Use mesh bounds to offset.
+		newWS += Vector3.up * .5f;
+		
 		Vector3 newSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(newWS);
 		Vector3 oldSS = GlobalObjects.GetMainCamera().WorldToScreenPoint(transform.position);
         runDirection = newSS - oldSS;
-		return MathUtil.GetWorldPositionFromLocal(GlobalObjects.GetMapMesh(), localPos);
+		
+		return newWS;
 	}
 	
 	public override void Update () 

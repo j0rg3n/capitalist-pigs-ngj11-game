@@ -21,14 +21,9 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	public Texture2D mapFieldTexture;
 	public Transform buildingPrefab;
 	public Transform startBuildingPrefab;
+	public Transform positionMarker;
 	
 	IndieHouseLocation startLocation;
-
-	public Transform InstantiateBuilding()
-	{
-		return (Transform)Instantiate(buildingPrefab);
-	}
-
 
 	public Transform debugPrefab;
 
@@ -57,12 +52,28 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 	Color colorPass = new Color(1f, 0f, 0f);
 	Color colorIndieHouse = new Color(1f, 1f, 0f);
 	Color colorStartPoint = new Color(1f, 0f, 1f);
-	
 
 	public int studiosCreated = 0;
 
-	// Use this for initialization
-	void Start () 
+	public Transform InstantiateBuildingAt(Transform buildingPrefab, Vector3 pos)
+	{	
+		//Instantiate(positionMarker, pos, Quaternion.identity);
+		
+		Transform buildingInstance = (Transform)Instantiate(buildingPrefab);
+        GlobalObjects.GetGlobbalGameState().ScaleInstance(buildingInstance);
+
+		var buildingBounds = buildingInstance.GetComponent<MeshFilter>().mesh.bounds;
+
+		var offset = buildingBounds.extents - buildingBounds.center;
+		offset = buildingInstance.transform.TransformPoint(offset);
+		offset.Scale(Vector3.up);
+
+		buildingInstance.position = pos + offset;
+		
+		return buildingInstance;
+	}
+
+	public void Start () 
 	{
 		waver.AI = this;
 
@@ -99,12 +110,7 @@ public class GlobalDevAIBehaviour : MonoBehaviour
 					startSpawnPointInd = waver.BlockCoordsToIndex(i, j);
 
 					Vector3 baseWorldPos = MathUtil.GetWorldPositionFromGridCoordinate(GetComponent<MeshFilter>(), i + .5f, j + .5f, MapWidth, MapHeight);
-					Transform startBuilding = (Transform)Instantiate(startBuildingPrefab);
-
-					var offset = startBuilding.GetComponent<MeshFilter>().mesh.bounds.extents;
-					offset.Scale(Vector3.up);
-					startBuilding.position = baseWorldPos + offset;
-                    GlobalObjects.GetGlobbalGameState().ScaleInstance(startBuilding);
+					InstantiateBuildingAt(startBuildingPrefab, baseWorldPos);
 
 					startLocation = new IndieHouseLocation();
 					startLocation.houseTileInd = waver.BlockCoordsToIndex(i, j);
