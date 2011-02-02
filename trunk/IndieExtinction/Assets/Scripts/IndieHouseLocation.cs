@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,13 +67,8 @@ namespace Irrelevant.Assets.Scripts
 			System.Diagnostics.Debug.Assert(!isPresent);
 			isPresent = true;
 
-			Transform buildingTransform = GlobalObjects.GetDevAIBehaviour().InstantiateBuilding();
-
-			var offset = buildingTransform.GetComponent<MeshFilter>().mesh.bounds.extents;
-			offset.Scale(Vector3.up);
-
-            buildingTransform.position = baseWorldPos + offset;
-            GlobalObjects.GetGlobbalGameState().ScaleInstance(buildingTransform);
+			Transform buildingPrefab = GlobalObjects.GetDevAIBehaviour().buildingPrefab;
+			Transform buildingTransform = GlobalObjects.GetDevAIBehaviour().InstantiateBuildingAt(buildingPrefab, baseWorldPos);
 
 			studio = buildingTransform.GetComponent<IndieStudioBehavior>();
 			studio.location = this;

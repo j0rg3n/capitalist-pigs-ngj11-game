@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class MathUtil
@@ -130,7 +130,7 @@ public class MathUtil
     }
     */
 
-	public static Vector2 GetLocalPositionFromWorldCorrected(MeshFilter planeMeshFilter, Vector3 worldPoint)
+	public static Vector2 	GetLocalPositionFromWorldCorrected(MeshFilter planeMeshFilter, Vector3 worldPoint)
 	{
 		Vector3 localPos = MathUtil.GetLocalPositionFromWorld(GlobalObjects.GetMapMesh(), worldPoint);
 		localPos.x = -localPos.x;
