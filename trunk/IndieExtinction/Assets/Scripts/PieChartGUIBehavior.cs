@@ -59,14 +59,20 @@ public class PieChartGUIBehavior : MonoBehaviour
         }
     }
 
-    private static void DrawRotatedTexture(Rect clockRect, Texture2D texture, float amount)
+    private void DrawRotatedTexture(Rect clockRect, Texture2D texture, float amount)
     {
         var center = new Vector2((clockRect.xMin + clockRect.xMax) / 2,
             (clockRect.yMin + clockRect.yMax) / 2);
 
         Matrix4x4 prevTransform = GUI.matrix;
         GUIUtility.RotateAroundPivot(amount * 360, center);
-        GUI.DrawTexture(clockRect, texture, ScaleMode.StretchToFill, true, 0);
+        
+        // This is the manual equivalent of RotateAroundPivot. Gives the same result.
+        /*var rot = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(amount * 360, new Vector3(0, 0, 1)), Vector3.one);
+        var trans = Matrix4x4.TRS(new Vector3(center.x, center.y, 0), Quaternion.identity, Vector3.one);
+        GUI.matrix = trans * rot * trans.inverse;*/
+        
+        GUI.DrawTexture(clockRect, texture, ScaleMode.StretchToFill, true, 1);
         GUI.matrix = prevTransform;
     }
 }
